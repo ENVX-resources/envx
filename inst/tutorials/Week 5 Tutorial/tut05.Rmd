@@ -1,0 +1,231 @@
+---
+title: Hypothesis testing and 1-sample t-tests
+author: Floris van Ogtrop
+  - ---
+  - "**ENVX1002 Introduction to statistical methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+  html_document:
+runtime: shiny_prerendered
+---
+
+```{r setup, eval=TRUE, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](images/usyd_horizontal.svg)
+
+## Hypothesis testing and 1-sample t-tests
+
+This tutorial will cover the basics of hypothesis testing and 1-sample t-tests. Work through the tutorial and answer the questions to test your understanding of the material. There is an additional practice quiz in Canvas to complete after this tutorial.
+
+### learning outcomes
+
+- Understand the concept of hypothesis testing
+- Understand the concept of 1-sample t-tests
+- Understand the concept of p-values
+
+### Story
+
+In this tutorial, we will learn how to use one-sample t-tests to analyze koala health. Specifically, we'll examine if there's a significant difference in the average weight of a koala population from a known average weight of 8.5kg for healthy adult koalas. This is important to know for koala conservation efforts.
+
+![By Caspa, Adobe stock images](images/Koala.jpeg){width="75%"}
+
+
+When we test a statistical hypothesis, we will generally follow the steps below:
+
+**H:** Write the null and alternative hypotheses \
+**A:** Test assumptions that the sample data is normally distributed \
+**T:** Calculate the t-statistic \
+**P:** Calculate the p-value \
+**C:** Make a statistical and biological conclusion \
+
+## Hypothesis
+
+For our koala example, the null hypothesis is that the average weight of the koala population is equal to 8.5kg. The alternative hypothesis is that the average weight of the koala population is not equal to 8.5kg. We call this a two tailed test as we are not testing in a specific direction of difference. The next two questions will test your understanding of the notation for the null and alternative hypotheses.
+
+### Questions
+
+```{r q1, echo=FALSE}
+
+message1 <- "This is the alternate hypothesis."
+message2 <- "This is the alternate hypothsis for a one tailed one sample t-test."
+message3 <- "This is the alternate hypothsis for a one tailed one one sample t-test."
+
+question("What is the null hypothesis for the koala example?",
+  answer("$H_0: \\mu = 8.5$", correct = TRUE),
+  answer("$H_1: \\mu \\ne 8.5$", message = message1), 
+  answer("$H_1: \\mu < 8.5$", message = message2), 
+  answer("$H_1: \\mu > 8.5$", message = message3),
+  random_answer_order = TRUE
+)
+```
+
+```{r q2, echo=FALSE}
+
+message1 <- "This is the null hypothesis."
+message2 <- "This is the alternate hypothsis for a one tailed one sample t-test."
+message3 <- "This is the alternate hypothsis for a one tailed one one sample t-test."
+
+question("What is the alternate hypothesis for the koala example considering we are interested in whether or not our sample of koalas is either lighter or heavier than 8.5kg?",
+  answer("$H_0: \\mu = 8.5$", message = message1),
+  answer("$H_1: \\mu \\ne 8.5$", correct = TRUE), 
+  answer("$H_1: \\mu < 8.5$", message = message2), 
+  answer("$H_1: \\mu > 8.5$", message = message3),
+  random_answer_order = TRUE
+)
+```
+
+## Assumptions
+
+Imagine we're studying a population of koalas and have collected the following weights in kg from a random sample of 10 koalas. 
+
+After stating our hypothesis, the next step to test the assumptions (**A**). The key assumptions for a one-sample t-test are that the sample data is normally distributed and that the sample data is independent (randomly sampled from a population). We will first test the assumption that the sample data is normally distributed. We can do this by using the Shapiro-Wilks test and then we will produce a boxplot and a qq normal plot.
+
+```{r koala-weights, exercise=TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+str(koala_weights)
+```
+
+<div id="filter-hint">
+**Hint:** You first use the `shapiro.test()` function and for the boxplot you can use the `geom_boxplot` function and for the qq normal plot you can use the `stat_qq()` and `stat_qq_line()`.
+</div>
+
+
+### Exercises
+
+```{r shapiro-test, exercise=TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+
+shapiro.test(koala_weights$Weight_kg)
+```
+
+What does the Shapiro-Wilks test tell us about the normality of the sample data? If the p-value is greater than 0.05, we fail to reject the null hypothesis and assume that the sample data is normally distributed. If the p-value is less than 0.05, we reject the null hypothesis and assume that the sample data is not normally distributed. What is the case in your above example?
+
+```{r boxplot, exercise=TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+
+library(ggplot2)
+ggplot(koala_weights, aes(x = Weight_kg)) +
+  geom_boxplot(fill = "green") +
+  ggtitle("Boxplot of Koala Weights") +
+  ylab("") +
+  xlab("Weight (kg)")
+```
+
+How does the boxplot look? Does it show any outliers? Is it symmetric? 
+
+```{r qqplot, exercise=TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+
+library(ggplot2)
+ggplot(koala_weights, aes(sample = Weight_kg)) +
+  stat_qq() + 
+  stat_qq_line(colour = "red") + 
+  ggtitle("Q-Q Plot of Koala Weights") +
+  xlab("Theoretical Quantiles") +
+  ylab("Sample Quantiles")
+```
+
+How does the qq normal plot look? Do the points deviate far from the line? Does it look like a smiley face?
+
+### Question
+
+```{r q3, echo=FALSE}
+message1 <- "This is incorrect, both lines of evidence suggest that the sample is normally distributed."
+message2 <- "This is incorrect as the p-value is greater than 0.05, so we fail to reject the null hypothesis."
+message3 <- "This is incorrect as the qqplot shows that the points do not deviate far from the line."
+
+question("Which statement is most correct?",
+  answer("1. Our Shapiro-Wilks test p > 0.05, so we fail to reject the null hypothesis and 2. Our qq normal plot shows that our the points lie approximately along the line so we can assume that our sample is normally distributed", correct = TRUE),
+  answer("1. Our Shapiro-Wilks test p > 0.05, so we fail to reject the null hypothesis and 2. Our qq normal plot shows that our the points lie approximately along the line. We can assume that our sample is NOT normally distributed", message = message1), 
+  answer("1. Our Shapiro-Wilks test p < 0.05, so we fail to reject the null hypothesis and 2. Our qq normal plot shows that our the points lie approximately along the line. We can assume that our sample is normally distributed", message = message2), 
+  answer("1. Our Shapiro-Wilks test p > 0.05, so we fail to reject the null hypothesis and 2. Our qq normal plot shows that our the points do NOT lie approximately along the line. We can assume that our sample is NOT normally distributed", message = message3),
+  random_answer_order = TRUE
+)
+```
+
+
+## One Sample T-Test
+
+Now that we have tested the assumptions, we can proceed to calculate the t-statistic (**T**) and p-value (**P**). Luckily, R has a built-in function to do this in one step for us. We can use the `t.test` function to calculate the t-statistic and p-value. The `t.test` function requires the sample data and the population mean as arguments. By default the `t.test` function assumes that the population mean is 0, so we need to specify the population mean as 8.5. We are going to consider a two-tailed test, so we will use the `alternative = "two.sided"` argument. Below is the code to calculate the t-statistic and p-value.
+
+`t.test(koala_weights$Weight_kg, mu = 8.5, alternative = "two.sided")`
+
+### Exercises
+
+Try this yourself using the koala weights data.
+
+```{r koala-t-test, exercise=TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+
+## Enter your code here
+
+```
+
+Remember: Statistical significance is a measure of the probability that an observed difference could have occurred by random chance. The p-value is the probability of observing a test statistic as extreme as the one calculated from the sample data, assuming the null hypothesis is true. If the p-value is less than the significance level (usually 0.05), then we reject the null hypothesis and conclude that the sample data provides enough evidence to support the alternative hypothesis. What is the case in your above example?
+
+### Questions
+
+```{r q4, echo=FALSE}
+
+message1 <- "This is incorrect as our p-value is greater than 0.05."
+message2 <- "This is incorrect the p-value is indeed greater than 0.05, so we fail to reject the null hypothesis and state that there is NO strong evidence that our sample weight is different from the hypothesised mean."
+message3 <- "This is incorrect as our p-value is greater than 0.05 and there is strong evidence that our sample weight is different from the hypothesised mean."
+
+question("Which statement is most correct?",
+  answer("Our t-test shows p > 0.05, so we fail to reject the null hypothesis so there is no strong evidence to suggest the mean of our sample weights is different from the hypothesised mean", correct = TRUE),
+  answer("Our t-test shows p < 0.05, so we fail to reject the null hypothesis so there is no strong evidence to suggest the mean of our sample weights is different from the hypothesised mean", message = message1), 
+  answer("Our t-test shows p > 0.05, so we reject the null hypothesis so there is strong evidence to suggest the mean of our sample weights is different from the hypothesised mean", message = message2), 
+  answer("Our t-test shows p < 0.05, so we reject the null hypothesis so there is strong evidence to suggest the mean of our sample weights is different from the hypothesised mean", message = message3),
+  random_answer_order = TRUE
+)
+```
+
+## Conclusion
+
+Based on the p-value of 0.13, which is greater than the significance level of 0.05, what is our final conclusion? Take a moment to think about whether this good news for the koala population?
+
+### Solution
+
+In conclusion, we have found that there is no strong evidence to suggest that the average weight of the koala population is different from 8.5kg. This is based on the p-value of 0.13, which is greater than the significance level of 0.05. Therefore, we fail to reject the null hypothesis. This is good news for the koala population, as it suggests that the average weight of the population is not significantly different from the healthy average weight of 8.5kg.
+
+## Summary
+
+In this tutorial, we have learned how to use one-sample t-tests to analyze koala health. Specifically, we examined if there's a significant difference in the average weight of a koala population from a known average weight of 8.5kg for healthy adult koalas. We followed the steps below to conduct the analysis:    
+
+**H:** Write the null and alternative hypotheses \
+**A:** Test assumptions that the sample data is normally distributed \
+**T:** Calculate the t-statistic \
+**P:** Calculate the p-value \
+**C:** Make a conclusion \
+
+## Exercise
+
+Now that you have learned how to conduct a two-tailed one-sample t-test, try to conduct a one-tailed one-sample t-test such that you are testing whether the average weight of the koala population is less than 8.5kg. The steps are the same as before, but you need to specify the `alternative = "less"` argument when using the `t.test` function.
+
+The hypothesis can be stated as 
+
+$H_0: \mu = 8.5$ \
+$H_1: \mu < 8.5$ \
+
+```{r one-tailed_test, exercise = TRUE}
+koala_weights <- data.frame(Weight_kg = c(8, 8.5, 7.8, 9, 8.2, 8.4, 7.5, 9.1, 8.3, 7.9))
+
+## enter your code here
+
+```
+
+Has your conclusion changed? Haw did the p-value change? Note that you will need to run this example in R-Studio
+
+## Thanks
+
+You have reached the end of this tutorial. If you have any questions, jump onto Ed discussion board and ask away. Good luck!
+
+This document is developed using resources that are available under a [Creative Commons Attribution 4.0 International license](https://github.com/usyd-soles-edu/.github/blob/main/cc-by), made available on the [SOLES Open Educational Resources repository](https://github.com/usyd-soles-edu).
