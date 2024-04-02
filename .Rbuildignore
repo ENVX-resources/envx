@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 playground.R
 ^README\.Rmd$
+^CONTRIBUTING\.Rmd$
