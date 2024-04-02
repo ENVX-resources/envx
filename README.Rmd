@@ -22,6 +22,8 @@ The `envx` package aims to be a one-stop package for ENVX1002 and ENVX2001 stude
 
 **As of this writing, the package is still under development and contains only a few tutorials in development.**
 
+[Contributing notes for the development team.](CONTRIBUTING.md)
+
 ## Installation
 
 You can install the development version of envx from [GitHub](https://github.com/) with:
