@@ -16,15 +16,13 @@ list_tutorials <- function() {
   tut_list <- purrr::map2(seq_along(tut_df$name), tut_df$name, ~ paste0(.x, ": ", .y))
   # Add the title to the list
   tut_list <- purrr:::map2(tut_list, tut_df$title, ~ paste0(.x, " - ", .y))
-
-  print(tutorials)
+  purrr::walk(tut_list, ~ cat(.x, "\n"))
   cat("\n")
   cat("Do you want to open a tutorial? (y/n): ")
   open <- readline()
   if (open == "y") {
     cat("Which tutorial do you want to open? (type the number): \n")
     # Print the list with each element on a new line
-    purrr::walk(tut_list, ~ cat(.x, "\n"))
     tut_num <- as.numeric(readline())
     learnr::run_tutorial(tut_df$name[tut_num], "envx")
   }
