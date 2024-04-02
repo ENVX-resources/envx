@@ -15,6 +15,9 @@ RoxygenNote: 7.3.1
 Suggests: 
     testthat
 Imports: 
+    car,
+    dplyr,
+    ggplot2,
     learnr,
     purrr,
     tibble
