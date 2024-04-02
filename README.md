@@ -1,12 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# envx
+# Welcome
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of envx is to …
+The `envx` package aims to be a one-stop package for ENVX1002 and
+ENVX2001 students at the University of Sydney. It installs all the
+packages you need for the course, and provides a set of functions to
+help you with your assignments and tutorials.
+
+**As of this writing, the package is still under development and
+contains only a few tutorials in development.**
 
 ## Installation
 
@@ -14,37 +20,26 @@ You can install the development version of envx from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("ENVX-resources/envx")
+install.packages("remotes")
+remotes::install_github("ENVX-resources/envx")
 ```
 
-## Example
+## Tutorials
 
-This is a basic example which shows you how to solve a common problem:
+The `envx` package includes a set of tutorials which accompany your
+labs. You can list the available tutorials with the `list_tutorials()`
+function:
 
 ``` r
 library(envx)
-## basic example code
+list_tutorials()
+#> Available tutorials:
+#> * envx
+#>   - Week 5 Tutorial : "Hypothesis testing and 1-sample t-tests"
+#>   - Week 6 Tutorial : "Two-sample t-tests" 
+#> 
+#> Do you want to open a tutorial? (y/n):
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+You can open a tutorial by typing the number of the tutorial you want to
+open.

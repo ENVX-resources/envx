@@ -13,43 +13,34 @@ knitr::opts_chunk$set(
 )
 ```
 
-# envx
+# Welcome
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of envx is to ...
+The `envx` package aims to be a one-stop package for ENVX1002 and ENVX2001 students at the University of Sydney. It installs all the packages you need for the course, and provides a set of functions to help you with your assignments and tutorials.
+
+**As of this writing, the package is still under development and contains only a few tutorials in development.**
 
 ## Installation
 
 You can install the development version of envx from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("ENVX-resources/envx")
+install.packages("remotes")
+remotes::install_github("ENVX-resources/envx")
 ```
 
-## Example
 
-This is a basic example which shows you how to solve a common problem:
+## Tutorials
+
+The `envx` package includes a set of tutorials which accompany your labs. You can list the available tutorials with the `list_tutorials()` function:
+
 
 ```{r example}
 library(envx)
-## basic example code
+list_tutorials()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+You can open a tutorial by typing the number of the tutorial you want to open.
 
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-# plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
