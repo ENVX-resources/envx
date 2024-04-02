@@ -1,6 +1,7 @@
 ---
 title: Hypothesis testing and 1-sample t-tests
-author: Floris van Ogtrop
+author:
+  -  Floris van Ogtrop
   - ---
   - "**ENVX1002 Introduction to statistical methods**"
   - School of Life and Environmental Science
@@ -12,6 +13,7 @@ output:
     allow_skip: true
   html_document:
 runtime: shiny_prerendered
+description: "This tutorial will cover the basics of hypothesis testing and 1-sample t-tests. Work through the tutorial and answer the questions to test your understanding of the material. There is an additional practice quiz in Canvas to complete after this tutorial."
 ---
 
 ```{r setup, eval=TRUE, include=FALSE}

@@ -1,6 +1,7 @@
 ---
 title: Two-sample t-tests
 author: 
+  - Januar Harianto
   - ---
   - "**ENVX1002 Introduction to Statistical Methods**"
   - School of Life and Environmental Science
@@ -17,6 +18,7 @@ output:
     progressive: true
     allow_skip: true
 runtime: shiny_prerendered
+description: "This tutorial will guide you through the steps to perform a two-sample t-test using R, including checking assumptions, viewing the data in `ggplot2`, and interpreting the results."
 ---
 
 ```{r setup, eval=TRUE, include=FALSE}
