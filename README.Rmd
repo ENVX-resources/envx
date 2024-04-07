@@ -44,5 +44,5 @@ library(envx)
 list_tutorials()
 ```
 
-You can open a tutorial by typing the number of the tutorial you want to open.
+When prompted, return `y` and then the number of the tutorial you would like to open.
 

@@ -34,12 +34,15 @@ function:
 
 ``` r
 library(envx)
+#> Package 'envx' version 0.0.0.9000
+#> 
+#> For tutorials, type `list_tutorials()`
 list_tutorials()
-#> 1: ENVX1002 Wk 5 Tutorial - Hypothesis testing and 1-sample t-tests 
-#> 2: ENVX1002 Wk 6 Tutorial - Two-sample t-tests 
+#> 1: ENVX1002 Week 5 Tutorial - Hypothesis testing and 1-sample t-tests 
+#> 2: ENVX1002 Week 6 Tutorial - Two-sample t-tests 
 #> 
 #> Do you want to open a tutorial? (y/n):
 ```
 
-You can open a tutorial by typing the number of the tutorial you want to
-open.
+When prompted, return `y` and then the number of the tutorial you would
+like to open.
