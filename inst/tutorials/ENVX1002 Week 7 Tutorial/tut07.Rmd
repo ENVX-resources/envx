@@ -1,0 +1,386 @@
+---
+title: Non-parametric tests
+author: 
+  - Januar Harianto
+  - ---
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output: 
+  learnr::tutorial:
+    theme: cosmo
+    language: 
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: "This tutorial will guide you through the steps to perform a two-sample t-test using R, including checking assumptions, viewing the data in `ggplot2`, and interpreting the results."
+---
+
+```{r setup, eval=TRUE, include=FALSE}
+library(tidyverse)
+library(learnr)
+library(downloadthis)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+![](images/usyd_horizontal.svg)
+
+### The `envx` package
+
+This tutorial is now available in the `envx` package on GitHub, which allows you to access tutorials locally *and* directly from your R console. While the package is in *very early* development, it may be useful for students who are having difficulties accessing tutorials via Binder, and so we have released it with no other features at this time.
+
+**To install the package, run the following code:**
+
+```r
+install.packages("remotes")
+remotes::install_github("ENVX-resources/envx")
+```
+
+Then load the package and use `list_tutorials()` to select the tutorial you want to run:
+
+```r
+library(envx)
+list_tutorials()
+```
+
+### Introduction
+
+This tutorial will focus on running non-parametric versions of the *t*-test. The `wilcox.test()` function in R is used to perform the following tests:
+
+- **Wilcoxon signed-rank test** -- a non-parametric version of the paired *t*-test and one-sample *t*-test
+- **Wilcoxon rank-sum test (Mann-Whitney U test)** -- a non-parametric version of the two-sample *t*-test
+
+Work through the tutorial by answering the questions and completing the exercises. We recommend that you create your own Quarto document if you wish to record your answers and code.
+
+### Learning outcomes
+
+- Interpret the results of a Wilcoxon signed-rank test
+- Interpret the results of a Wilcoxon rank-sum test
+- Compare the results of a Wilcoxon rank-sum test with a two-sample *t*-test
+- Interpret statistical output
+
+## Introduction to non-parametric tests
+
+Real-world data often do not meet the assumptions of parametric tests, such as the normality of the data. In such cases, non-parametric tests can be viable alternatives, especially when the sample size is small and the data are skewed with outliers.
+
+In this tutoral we will focus on the non-parametric versions of the *t*-test, but there are many other non-parametric tests available for different types of data.
+
+###
+
+Before we start, it may be a good idea to review the **assumptions** of the *t*-test, discuss the differences between parametric and non-parametric tests, and understand when to use each type of test.
+
+### Assumptions of the *t*-test
+
+Depending on the type of *t*-test, the assumptions may vary slightly. 
+
+###
+The **one-sample *t*-test** assumes that the data are normally distributed.
+
+The **two-sample *t*-test** assumes that the data are normally distributed and have equal variances. However, if **paired data** are used, the assumption of equal variances is not necessary and the test is called a **paired *t*-test**.
+
+### Violations of normality
+
+When the data are not normally distributed, our estimates of the mean and standard deviation may be biased. This can lead to incorrect conclusions when using parametric tests, especially when the sample size is small i.e. < 30.
+
+**But what if sample size is larger than 30**? Because of how the Central Limit Theorem works, the *t*-test can be robust to violations of normality when the sample size increases. **However, it is still important to check the assumptions because the *t*-test is still affected by violations of homogeneity of variances,** and a "large" sample size can be subjective and vary depending on the shape of the distribution.
+
+### Normality
+
+As usual, we should check the assumptions of the test **before** proceeding. By now you should realise that we diagnose possible violations of model assumptions by visualising the data. With small sample sizes, it can be quite a challenge to determine if the data are normally distributed from the raw data (or residuals, once you learn how to access those later in this unit) alone. Formal tests, such as the **Shapiro-Wilk test**, can be used to check for normality in these cases.
+
+### Homogeneity of variances
+
+Non-parametric tests are not that much concerned about homogeneity of variances assumption but it can still be important to validate this assumption -- the Wilcoxon rank-sum test is sensitive to **symmetry** whereas the Mann-Whitney U test is concerned with the **central location of the distribution(s)** (i.e. median), which are all strongly affected by the spread of the data. If variances are equal, the results may be much easier to interpret!
+
+### What are the non-parametric tests that we will use?
+
+We will look at the **Wilcoxon signed-rank test** and the **Wilcoxon rank-sum test** (also known as the Mann-Whitney U test).
+
+
+### Wilcoxon signed-rank test
+The **Wilcoxon signed-rank test** is a non-parametric version of the paired *t*-test and one-sample *t*-test. It is used to compare the means of two related groups when the data are not normally distributed and has **no assumptions about normality**, although it does assume **symmetry** in the distribution **IF THE SAMPLE IS DRAWN FROM A CONTINUOUS DISTRIBUTION**. 
+
+
+###
+Since this is often the case as we would have planned to perform a *t*-test, it also means that we can formulate our hypotheses in terms of the median (if we want) because in a symmetric distribution, the mean and median are equivalent.
+
+
+### Wilcoxon rank-sum test
+The **Wilcoxon rank-sum test** (also known as the Mann-Whitney U test) is a non-parametric version of the two-sample *t*-test. It is used to compare the means of two independent groups when the data are not normally distributed and has **no assumptions about normality**. The test is concerned with the **central location of the distribution(s)** (i.e. median) and is more relaxed about symmetry. Instead, the assumption is that **the shape of the distribution is the same for both groups**.
+
+### When to use non-parametric tests
+
+The general approach is to always prefer parametric tests when the assumptions are met. However, when the assumptions are violated, non-parametric tests can be used as an alternative, but not before trying to **transform** the data to meet the assumptions of the parametric test first. 
+
+###
+These are *not* hard and fast rules, but general guidelines. The choice of test should be based on the nature of the data and the research question which takes time to develop as you gain more experience in statistics.
+
+###
+Importantly, non-parametric tests are less powerful than their parametric counterparts, which means that they are less likely to detect a true effect if it exists. This is because they are based on ranks rather than the actual data values, which can lead to a loss of information. 
+
+###
+And speaking of effect sizes, non-parametric tests do not have a direct analogue to determine the effect size (although there are ways to estimate it), which can make it difficult to interpret the practical significance of the results.
+
+### 
+Ok, that was a lot of text. No quizzes this time, let's get started!
+
+## Exercise 1: Beetles
+
+This exercise is based on the same data used in Lecture 7a. Download the data by clicking on the button below.
+
+
+```{r message=FALSE, echo=FALSE}
+download_file(
+  path = "beetle.csv",
+  output_name = "beetle.csv",
+  button_label = "Download beetle.csv",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+### Background
+
+Powell and Russell (1984, 1985) investigated differences in beetle consumption between two size classes of eastern horned lizard (*Phrynosoma douglassi brevirostre*) represented respectively by adult females in the larger class and adult male and yearling females in the smaller class.
+
+We will use the data to test the hypothesis that the mean consumption of beetles is the same between the two groups.
+
+###
+
+```{r question-01, echo=FALSE}
+question("Which test should we initially try to perform to compare the mean consumption of beetles between the two groups?",
+  answer("Two-sample t-test", correct = TRUE,
+  message = "Correct! The two-sample t-test is the parametric test that we should try first as it is the most powerful test."),
+  answer("Wilcoxon rank-sum test",
+  message = "The Wilcoxon rank-sum test is the non-parametric version of the two-sample t-test. We should try the parametric test first."),
+  answer("Wilcoxon signed-rank test",
+  message = "The Wilcoxon signed-rank test is the non-parametric version of the paired t-test. It is not appropriate for this data since there is no indication that the data groups are dependent."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+  )
+
+```
+
+### HATPC
+
+As usual, think about the HATPC workflow when performing an inferential statistical test.
+
+### Hypothesis
+
+The null hypothesis is that the mean consumption of beetles is the same between the two groups. The alternative hypothesis is that the mean consumption of beetles is different between the two groups. Therefore we have:
+
+
+$$H_0: \mu_1 = \mu_2$$
+$$H_1: \mu_1 \neq \mu_2$$
+
+where $\mu_1$ is the mean consumption of beetles in size class 1 and $\mu_2$ is the mean consumption of beetles in size class 2.
+
+*Note that we can alter the hypotheses to use medians instead of means if we suspect that the data are not normally distributed and require a non-parametric test.*
+
+### Assumptions
+
+You're doing this a lot, so let's just say that you may benefit from generating "template" code to quickly check the assumptions of the two-sample *t*-test and other parametric tests in the future.
+
+###
+
+Let's load the data and check the first few rows. The `glimpse()` function is used here to check the data types of each column.
+
+```{r load_data, message=FALSE}
+library(tidyverse)
+beetle <- read_csv("beetle.csv")
+glimpse(beetle)
+```
+
+### Assumptions
+
+Use a combination of histograms, boxplots and QQ-plots to check the assumptions of the two-sample *t*-test. In reality these exploratory data analysis (EDA) steps are eventually not published for "the final report" so the sky's the limit on how much you want to do to understand your data. There is no need to make the plots pretty, too, but we have done so here to make it easier to understand (and for you to look at the code and practice).
+
+```{r check_assumptions, message=FALSE}
+library(ggplot2)
+
+# Histogram
+ggplot(beetle, aes(x = BEETLES)) +
+  geom_histogram(bins = 15) +
+  facet_wrap(~SIZE) +
+  labs(title = "Histogram of beetle consumption by size class",
+       x = "Consumption",
+       y = "Frequency")
+
+# Boxplot
+ggplot(beetle, aes(x = SIZE, y = BEETLES)) +
+  geom_boxplot() +
+  facet_wrap(~SIZE) +
+  labs(title = "Boxplot of beetle consumption by size class",
+       x = "Size class",
+       y = "Consumption")
+
+# QQ-plot
+ggplot(beetle, aes(sample = BEETLES)) +
+  geom_qq() +
+  geom_qq_line() +
+  labs(title = "QQ-plot of beetle consumption")
+
+
+
+```
+
+
+### 
+
+```{r question-02, echo=FALSE}
+question("Based on the histograms, boxplots, and QQ-plots, do you think the data meet the assumptions of the two-sample t-test?",
+  answer("Yes",
+  message = "This is not correct. The QQ-plot shows that the data are not normally distributed and the histograms show that the data are skewed."),
+  answer("No", correct = TRUE,
+  message = "The data appear to be normally distributed and have equal variances."),
+  random_answer_order = TRUE,
+  allow_retry = TRUE
+  )
+
+```
+
+
+### 
+At this stage we should attempt to transform the data to meet the assumptions of the *t*-test. However, for the sake of this tutorial, we will proceed with the Wilcoxon rank-sum test.
+
+### Test statistic
+We use the `wilcox.test()` function to perform the Wilcoxon rank-sum test. Using the `BEETLES` variable as the response and the `SIZE` variable as the grouping variable, we can test the hypothesis that the mean consumption of beetles is the same between the two groups.
+
+```{r wilcox_test, message=FALSE}
+wilcox.test(BEETLES ~ SIZE, data = beetle)
+```
+
+
+### P-value and conclusion
+The results show that the p-value is bigger than 0.05, which means that we fail to reject the null hypothesis. Therefore, we conclude that there is no significant difference in the mean consumption of beetles between the two groups (W = 329, p = 0.07).
+
+### 
+At this point, we should compare the results of the Wilcoxon rank-sum test with the two-sample *t*-test to see if the results are consistent.
+
+```{r compare_t_test, message=FALSE}
+t.test(BEETLES ~ SIZE, data = beetle)
+```
+
+As you can see, violation of the normality assumption can lead to different results between the two tests. In this case, the Wilcoxon rank-sum test is more conservative and does not detect a significant difference in the mean consumption of beetles between the two groups.
+
+## Exercise 2: Viral load in cattle
+
+This exercise is based on a simulated dataset that we will use to test the hypothesis that the mean viral load in cattle is different after treatment with a new drug.
+
+### Background
+
+Consider a randomised controlled trial evaluating a new anti-retroviral therapy for cattle infected with bovine immunodeficiency virus (BIV). The viral load in cattle (quantity of virus per milliliter of blood) was measured before and after treatment with the new drug.
+
+We will use the data to test the hypothesis that the mean viral load in cattle is **lower** before and after treatment with the new drug -- a one-tailed test!
+
+### HATPC
+
+Again, think about the HATPC workflow!
+
+### Hypothesis
+
+The null hypothesis is that the mean viral load in cattle is the same before and after treatment with the new drug. The alternative hypothesis is that the mean viral load in cattle is lower after treatment with the new drug. Therefore we have:
+
+$$H_0: \mu_1 = \mu_2$$
+$$H_1: \mu_1 > \mu_2$$
+
+where $\mu_1$ is the mean viral load before treatment and $\mu_2$ is the mean viral load after treatment.
+
+### Assumptions
+
+Load the data first. Since it's simulated we'll just generate the data manually. Additionally we will use a non-tidy dataset (as compared to the beetle data, which was tidy) to demonstrate how to use the `wilcox.test()` function with non-tidy data.
+
+
+```{r load_data_2, message=FALSE}
+before <- c(5000, 4200, 1300, 900, 7400, 4500, 7500)
+after <- c(540, 670, 1000, 960, 1200, 4650, 4200)
+virus <- data.frame(before, after)
+glimpse(virus)
+
+```
+
+###
+Plot the data to check the assumptions of the paired *t*-test.
+
+```{r check_assumptions_2, message=FALSE}
+p1 <- ggplot(virus, aes(x = before)) +
+  geom_histogram() +
+  labs(title = "Viral load before treatment",
+       x = "Viral load",
+       y = "Frequency")
+
+p2 <- ggplot(virus, aes(x = after)) +
+  geom_histogram() +
+  labs(title = "Viral load after treatment",
+       x = "Viral load",
+       y = "Frequency")
+
+p3 <- ggplot(virus, aes(sample = before)) +
+  geom_qq() +
+  geom_qq_line() +
+  labs(title = "Viral load before treatment")
+
+p4 <- ggplot(virus, aes(sample = after)) +
+  geom_qq() +
+  geom_qq_line() +
+  labs(title = "Viral load after treatment")
+
+# boxplot
+p5 <- ggplot(virus, aes(x = "", y = before)) +
+  geom_boxplot() +
+  labs(title = "Viral load before treatment",
+       x = "",
+       y = "Viral load")
+
+p6 <- ggplot(virus, aes(x = "", y = after)) +
+  geom_boxplot() +
+  labs(title = "Viral load after treatment",
+       x = "",
+       y = "Viral load")
+
+library(patchwork)
+p1 + p3 + p5
+p2 + p4 + p6
+```
+
+
+### 
+
+```{r question-03, echo=FALSE}
+question("Based on the histograms, boxplots, and QQ-plots, do you think the data meet the assumptions of the paired t-test?",
+  answer("Yes",
+  message = "This is not correct. The QQ-plots show that the data are not normally distributed."),
+  answer("No", correct = TRUE),
+  allow_retry = TRUE
+  )
+
+```
+
+
+### Test statistic
+
+Let's perform the Wilcoxon signed-rank test to compare the mean viral load in cattle before and after treatment with the new drug. Because the data is not tidy, we cannot use the formula syntax in the `wilcox.test()` function. Instead, we will use the `before` and `after` columns directly and supply them as `x` and `y` arguments.
+
+```{r wilcox_test_2, message=FALSE}
+wilcox.test(x = virus$after, y = virus$before, paired = TRUE, alternative = "less")
+```
+
+### P-value and conclusion
+
+The results show that the p-value is smaller than 0.05, which means that we reject the null hypothesis. Therefore, we conclude that the median viral load in cattle is lower after treatment with the new drug (V = 3, p = 0.04).
+
+## Thanks
+
+You have reached the end of this tutorial. We hope you have learned how to perform a two-sample *t*-test and interpret the results.
+
+
+*This document is developed using resources that are available under a [Creative Commons Attribution 4.0 International license](https://github.com/usyd-soles-edu/.github/blob/main/cc-by), made available on the [SOLES Open Educational Resources repository](https://github.com/usyd-soles-edu).*
