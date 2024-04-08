@@ -1,8 +1,7 @@
+Welcome
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# Welcome
-
 <!-- badges: start -->
 <!-- badges: end -->
 
@@ -40,6 +39,7 @@ library(envx)
 list_tutorials()
 #> 1: ENVX1002 Week 5 Tutorial - Hypothesis testing and 1-sample t-tests 
 #> 2: ENVX1002 Week 6 Tutorial - Two-sample t-tests 
+#> 3: ENVX1002 Week 7 Tutorial - Non-parametric tests 
 #> 
 #> Do you want to open a tutorial? (y/n):
 ```

@@ -1,4 +1,5 @@
 ---
+title: Welcome
 output: github_document
 ---
 
@@ -13,7 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Welcome
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -28,7 +28,7 @@ The `envx` package aims to be a one-stop package for ENVX1002 and ENVX2001 stude
 
 You can install the development version of envx from [GitHub](https://github.com/) with:
 
-``` r
+```r
 install.packages("remotes")
 remotes::install_github("ENVX-resources/envx")
 ```
