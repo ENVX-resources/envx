@@ -3,6 +3,7 @@
 export(list_tutorials)
 importFrom(learnr,available_tutorials)
 importFrom(learnr,run_tutorial)
+importFrom(lifecycle,deprecated)
 importFrom(purrr,map2)
 importFrom(purrr,walk)
 importFrom(tibble,tibble)
