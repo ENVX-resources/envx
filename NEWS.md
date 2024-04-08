@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9002 (2024-04-08)
+
+## tutorials
+
+- Removed incorrect message in a quiz.
+
+
 # envx 0.0.0.9001 (2024-04-08)
 
 ## Bug fixes
@@ -21,4 +28,3 @@
 - Add link to contributing notes.
 
 - Add contributing instructions.
-
