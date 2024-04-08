@@ -16,8 +16,10 @@ Suggests:
     testthat
 Imports: 
     car,
+    downloadthis,
     dplyr,
     ggplot2,
     learnr,
+    patchwork,
     purrr,
     tibble
