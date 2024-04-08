@@ -240,8 +240,7 @@ ggplot(beetle, aes(sample = BEETLES)) +
 question("Based on the histograms, boxplots, and QQ-plots, do you think the data meet the assumptions of the two-sample t-test?",
   answer("Yes",
   message = "This is not correct. The QQ-plot shows that the data are not normally distributed and the histograms show that the data are skewed."),
-  answer("No", correct = TRUE,
-  message = "The data appear to be normally distributed and have equal variances."),
+  answer("No", correct = TRUE),
   random_answer_order = TRUE,
   allow_retry = TRUE
   )
