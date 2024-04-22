@@ -48,10 +48,28 @@ More information about the dataset is available here: https://datasets.wri.org/d
 
 I have left the data as-is so we can have a quick look over it before starting our analyses.
 
+Download the data: 
+
+```{r message=FALSE, echo=FALSE}
+
+downloadthis::download_file(
+  path = "ENVX1002_Tutorial_Describing_relationships.xlsx",
+  output_name = "ENVX1002_Tutorial_Describing_relationships",
+  button_label = "Download ENVX1002_Tutorial_Describing_relationships.xlsx",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+<br>
 
 <div class="pad-box-mini" style="border: 1px solid gray; padding-left:10px; background-color:#d7ecf8">
 
 ### Our scientific question
+
+Don't forget to download the data (click on the red button in the previous section, which you can navigate to again from the sidbar to the left).
 
 With increased power plant capacity, is there more power being generated?
 
