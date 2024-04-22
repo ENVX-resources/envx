@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9004 (2024-04-23)
+
+## Bug fixes
+
+- Add link to download file in Tutorial 9.
+
+
 # envx 0.0.0.9003 (2024-04-23)
 
 ## tutorials
