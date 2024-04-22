@@ -9,3 +9,7 @@ playground.R
 *_files/
 
 README.html
+*_cache/
+*_files/
+inst/**/*.html
+
