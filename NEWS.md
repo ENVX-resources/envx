@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9005 (2024-05-06)
+
+## Bug fixes
+
+- Rename folders to arrange tutorial list in proper order.
+
+## tutorials
+
+- Add week 11 tutorial.
+
+
 # envx 0.0.0.9004 (2024-04-23)
 
 ## Bug fixes
