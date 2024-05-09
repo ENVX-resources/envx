@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9006 (2024-05-09)
+
+## tutorials
+
+- Add week 12 tutorial.
+
+
 # envx 0.0.0.9005 (2024-05-06)
 
 ## Bug fixes
