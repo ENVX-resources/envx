@@ -1,0 +1,564 @@
+---
+title: "ENVX1002 Tutorial week 12"
+author: 
+  - Liana Pozza
+  - ----
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ----
+output: 
+  learnr::tutorial:
+    theme: cosmo
+    language: 
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(
+	cache = TRUE,
+	output = FALSE
+)
+```
+
+## What we will cover in this tutorial
+
+In this week's tutorial we will be doing an exploration to determine the most suitable model for our data. In our exploration We will draw upon the non-linear models covered in the week 12 lectures and how to fit them. 
+
+### The problem
+
+I would like to find a suitable model to fit relationship between the number of Anthrax cases in domestic animals in Europe changed over time from 2005-2017. 
+
+Anthrax is a disease caused by the bacteria known as *Bacillus anthracis*, which is naturally occurring in soil and can remain there for a substantial amount of time (CDC, 2022). Grazing animals may ingest the spores and become infected, with the disease eventually killing the host (Sweeney et al 2011). Humans can become infected if they make contact with infected animals or animal products. It is an issue of concern both for animal welfare and human health, so it is worth looking at. 
+
+### The data
+
+This week's tutorial data comes from the World Organisation for Animal Health World Animal Health Information System (OIE, 2020). The database is compiled from data contained within official reports submitted by Veterinary services of member and non-member countries around the world.
+
+It is a huge database, so I used the [visualisation tool on the website](https://wahis.oie.int/#/dashboards/qd-dashboard) to select a single disease of interest (Anthrax) and a single location (Europe). I was then able to download the data as an excel file. 
+
+This excel file was also huge, so I ended up cleaning the data, aggregating the number of cases across each year using the `aggregate()` function in R, so there was only one value per year, rather than one value for each country, region, etc. 
+
+I also converted the Year variable into a vector of consecutive numbers representing time steps, rather than leaving it as the year. This makes things easier for R and makes the output easier to interpret. 
+
+### Data dictionary
+
+This week it is simple, but nice to have clearly outlined. 
+
+* Year = year the total number of anthrax cases were recorded, has been transformed into a vector ranging from 1 (representing 2005) to 13 (representing 2017).
+
+* Cases = Mean number of Anthrax cases for each year calculated across all European countries and species of animals (e.g. goats, cattle).
+
+### Read in data
+
+```{r read}
+
+anthrax = read.csv("ENVX1002_wk12_Tutorial_data.csv", header=TRUE) 
+# header=TRUE tells R to read the first row as the column headings, not data
+# Transform into time steps rather than years
+anthrax$Year = 1:nrow(anthrax)
+```
+
+###
+Once we have read the data in, we can look at it as a whole, and look at the structure to ensure the data have been read in correctly. 
+
+```{r first_look}
+anthrax # As it is a small dataset, can look at it directly in the console
+
+str(anthrax) 
+
+```
+
+Using the `str()` function tells us the data has been read in correctly - `Year` is an integer and `Cases` is numeric. 
+
+Numeric variables can be read in as factors or characters if there are certain NA strings that R doesn't recognise, e.g. using a '-' or a number with a character in it, e.g. '9E26'. If this did happen, we can tell R how to read these NA strings when we read in the data. 
+
+## Exploratory analysis
+
+### Summary statistics
+
+As usual, we need to have an understanding about the distribution of the data, so using the `summary` function we can look at the central values, as well as the range:
+
+```{r summarystats} 
+
+summary(anthrax)
+
+```
+
+From our summary we can see the number of cases range from 2.565 to 115.875, and there seems to be quite a skew, evident in the mean and medians being dissimilar. 
+
+###
+To further demonstrate this we can do a quick boxplot and histogram of the number of cases: 
+
+```{r boxbox} 
+# Set visual display
+par(mfrow=c(1,2))
+
+boxplot(anthrax$Cases)
+hist(anthrax$Cases)
+
+```
+
+In the boxplot we can see a skew as the bar representing the median isn't in the centre of the grey box, and the whiskers are not symmetrical. The histogram is also not symmetrical supporting our idea that the variable is skewed. 
+
+As we can see some skewness happening, we could try to transform depending on the tests we are using/models we are fitting. In the meantime we will leave it untransformed. 
+
+### Any relationship?
+
+If we are unsure what to expect, first thing we can do it plot the two variables:
+
+```{r simple_plot}
+
+par(mfrow=c(1,1))
+
+plot(anthrax$Year, anthrax$Cases)
+
+```
+
+Can we see any sort of trend occurring?
+
+###
+If we think it is linear, we can also calculate the correlation coefficient:
+
+```{r cor}
+
+cor(anthrax)
+
+```
+
+The correlation coefficient tells us there is a strong, positive, linear relationship occurring whereas our plot tells us there may be a stronger non-linear relationship occurring. 
+
+## Linear (straight line) models
+
+### Simple linear regression
+
+As we found through or correlation coefficient there was a strong linear relationship occurring, we can first try fitting a simple linear regression. This is quite handy, as it ties in with parsimony - we are trying the simplest model first. 
+
+```{r fitmod}
+
+mod = lm(Cases ~ Year, data=anthrax)
+
+```
+
+###
+For our simple linear regression we would be able to do hypothesis testing which assumes a few things. We therefore need to check our assumptions.
+
+###
+
+```{r assumptions, fig.height=7}
+
+# As we are doing hypothesis testing 
+par(mfrow=c(2,2))
+plot(mod)
+
+```
+
+* Residual vs fitted: NOT MET. Points follow a trend, line isn't straight. 
+* Normal Q-Q: MET. Most points follow the 45 degree line. 
+* Scale-Location: NOT MET. Points seem to follow a cyclic trend, not evenly scattered. 
+* Residuals vs Leverage: NOT MET. Looks strange, one value outside the 0.5 dotted boundary in top right corner, and other points close to the boundary. 
+
+We can conclude the assumptions have not been met, so we would need to consider transforming the response variable, or look at using an alternative model. 
+
+###
+First we can try transforming the response to try linearising the relationship:
+
+```{r fitlogmod}
+
+logmod = lm(log(Cases) ~ Year, data=anthrax)
+
+```
+
+Now we can check the assumptions again: 
+
+```{r logmod_assumptions, fig.height=7}
+
+# As we are doing hypothesis testing 
+par(mfrow=c(2,2))
+plot(logmod)
+
+```
+
+* Residual vs fitted: NOT MET. Line is straighter, but points still follow a trend rather than an even scatter. 
+* Normal Q-Q: MET. Most points follow the 45 degree line. If comparing to the previous QQ plot, looks worse and so could argue it is not met.  
+* Scale-Location: NOT MET. Points seem to follow less of a cyclic trend after transformation, but they are still not evenly scattered. 
+* Residuals vs Leverage: NOT MET. Looks better, but single value now lies outside the second dotted boundary (cooks distance = 1) in top right corner. 
+
+In this case logging the response hasn't really helped us, but that's okay! we have more in our modelling toolbox to work with. 
+
+### Plot the models
+
+Although our assumptions were not met, let's plot the models we have so far and see how well they fit the points. We can see the model with `log(Cases)` fits the points better than the untransformed linear model, but only slightly. 
+
+```{r plot_lm}
+par(mfrow=c(1,2))
+
+# overlay plot
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+abline(mod) #Adds lines to original plot
+
+# overlay plot
+plot(anthrax$Year,log(anthrax$Cases),xlab='Year', ylab='log(Cases)')
+abline(logmod) #Adds lines to original plot
+
+```
+
+###
+This slightly better fit is also evident in the model summaries, where there is only a difference of about 0.1 in the multiple r^2^ between the untransformed and logged model. 
+
+```{r summary_lm}
+
+# Model with untransformed Cases 
+summary(mod) 
+
+# Cases = -30.63 + 9.96 * Year 
+
+# Model with Cases log transformed  
+summary(logmod) 
+
+# log(Cases) = 0.59 + 0.33 * Year 
+```
+
+While we found our assumptions were not met, we are still able to look at the model summary, we just cannot interpret our t-test results with confidence. 
+
+
+## Quadratic polynomial
+
+###
+When looking at the original plot we saw the points start to gradually increase in a curving trend, so we could try a polynomial next.
+
+```{r fit_mod_quad}
+
+# Set up time-squared column
+anthrax$Year2 = I(anthrax$Year^2)
+
+mod_quad = lm(Cases ~ Year + Year2, data = anthrax)
+
+```
+
+###
+Because we are no longer fitting a linear relationship like MLR or SLR, we don't check the assumptions and we are testing the hypotheses in a slightly different way. 
+
+```{r summary_mod_quad}
+
+summary(mod_quad)
+
+# Cases = 12.52 - 7.31 * Year + 1.23 * Year^2 
+```
+
+For polynomials we are only testing the hypothesis of the highest order, i.e. the quadratic term in this case. Is the quadratic term significant?
+
+In this case, it is significant, so it is currently looking better than our original linear models.
+
+We can also see the model fits very well, with an adjusted r^2^ of 0.9666. We can say our model accounts for 97% of variation in case numbers. 
+
+### Plot the model
+
+To get a visual understanding of the model, we can overlay the fitted line onto our plot. 
+
+As the line will be curved, we need to use to model to generate a series of predictions so we can produce a continuous line. From there, we can overlay the line onto the plot. 
+
+```{r plot_mod_quad}
+par(mfrow=c(1,1)) # reset visual
+
+# creates a sequence of new x variables for our model to use for prediction
+# Sequence of numbers from 0 to max(year) going up in increments of 1
+new.year = seq(0,max(anthrax$Year),1) 
+
+# Use model to predict on these new values of x
+new.pred_quad = predict(mod_quad,list(Year=new.year,Year2=new.year^2))
+
+# overlay plot
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, new.pred_quad) #Adds lines to original plot
+
+```
+
+This is very nice that our model fits, but does it make sense?
+
+The quadratic curve fits quite well to our points, and it is easier to interpret than a true non-linear model. The downside is what the curve is telling us, and how it would go if we wanted to extrapolate further into the future. 
+
+### How about a cubic polynomial?
+
+```{r fit_mod_cub}
+
+# Set up time-cubed column
+anthrax$Year3 = I(anthrax$Year^3)
+
+mod_cub = lm(Cases ~ Year + Year2 + Year3, data = anthrax)
+
+summary(mod_cub)
+
+# Cases = 19.78 - 12.58 * Year + 2.14 * Year^2 - 0.04 * Year^3
+```
+
+Unlike the quadratic model, the predictors are now all non-significant, and the r^2^ adjusted is slightly lower for the cubic model. When provided with two models with similar outputs, we select the simplest, which is the one with fewer predictors. 
+
+### Plot the model
+
+Similar to the quadratic model, the line is going to be curved, so we need to use our model to predict onto a set of fresh x values. We have already set this up in the previous plot, so we can skip the step and jump into prediction. 
+
+```{r plot_mod_cub}
+
+# Can skip this, did before:
+# new.year = seq(0,max(anthrax$Year),1) 
+
+# Use model to predict on these new values of x
+new.pred_cub = predict(mod_cub,list(Year=new.year,
+                                      Year2=new.year^2, 
+                                      Year3=new.year^3))
+
+# overlay plot
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, new.pred_cub) #Adds lines to original plot
+
+```
+
+The plot supports what we have found in the model summary - not the best fit. 
+
+Visually we can see the line doesn't fit the points as well as the quadratic model. The line seems to start further away from the points, and it doesn't cut through as many points like the quadratic model does. 
+
+
+## Exponential growth model
+
+###
+Next we can try fitting our data to a non-linear model to see if it makes more sense for what we are doing. As the number of cases is increasing over time, we could start with an exponential growth curve. 
+
+The general structure for an exponential growth curve is: 
+
+$y=y_0e^{kx}$  
+
+where 
+
+* *y* is the number of cases in the year *x*, 
+
+* y~0~ is the number of cases at time 0 (2005) and 
+
+* *k* is the rate constant.
+
+This type of fitting is slightly different to our linear models, as rather than fitting the model to the data, we are now fitting data to a specific model. 
+
+We will use the `nls` function to fit our model. This function requires us to specify a set of starting values, similar to what we have been doing in Excel with Solver. 
+
+###
+
+Our starting values: 
+
+* Y0: Looking at the data, we can see the number of cases in 2005 (this is time=0), was 5.8
+
+* A bit more effort for this, we can calculate k using the following equation: 
+
+$$
+slope = k = \frac{log_e y_{max} - log_e y_{min}}{x_{max} - x_{min}}
+$$  
+
+So applied to our data, k would be: 
+
+$$
+slope = k = \frac{log_e 115.875 - log_e 2.565217}{2017-2005} = \frac{3.810469}{12}  = 0.3175391
+$$  
+
+And we can calculate it in R as follows: 
+
+```{r}
+
+k = (log(max(anthrax$Cases))- log(min(anthrax$Cases)))/(max(anthrax$Year)-min(anthrax$Year))
+
+# could also use: 
+# summary(lm(log(anthrax$Cases)~anthrax$Year))
+# Coeff for Year = k = 0.33295
+```
+
+###
+Once we have worked out a decent start value for k, we can fit the model:
+```{r}
+
+##Initial parameters
+exp.mod<-c(Bp=5.8, Cp=k)
+#Bp is our Y0, and Cp is our rate constant (k)
+# Y0: 5.8
+# k: 0.3175 (calculated above)
+
+# Fit exponential model
+mod_exp<-nls(Cases ~ Bp * exp(Cp * Year), data = anthrax, start=exp.mod, trace=T)
+
+summary(mod_exp)
+
+# Cases = 3.68275 * exp(0.27445 * Year)
+```
+
+We can then look at the Residual Sum of Squares (RSS) using the `deviance()` function: 
+
+```{r}
+# Check the RSS
+deviance(mod_exp) # 1222
+```
+
+### Plot model
+
+We can then get a visual of the model fit:
+
+```{r plot_mod_exponential}
+
+# Can skip this, did before:
+# new.year = seq(0,max(anthrax$Year),1) 
+
+# Use model to predict on these new values of x
+#Makes predictions onto temp.new
+pred.exp<-predict(mod_exp,list(Year=new.year))
+
+# overlay plot
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, pred.exp) #Adds lines to original plot
+
+```
+
+The model seems to fit alright, perhaps not as good as the quadratic model, but like the quadratic model, it would not be suitable for extrapolation. The exponential model assumes the points will continue increasing at an increasing rate, but at some point we would expect resources to run out and bacterial growth to slow. This is where a logistic model may be handy for us. 
+
+## Logistic model
+
+###
+Logistic models are often used to model disease outbreaks as there is a point where growth should stabilise, rather than continue increasing exponentially as you would see with an exponential model.
+
+###
+This point where the curve flattens is known as the 'carrying capacity' and is denoted by C in the equation below:
+
+$y = A + \frac{C}{1+e^{-B(t-M)}}$
+
+* *A* = starting point or initial condition, 
+* *C* = value of *y* where the function flattens out (the horizontal asymptote), * * * *M* = value of *x* where the change in *y* is largest (always occurs at y = A + 0.5*C*), and 0.5
+* *B* is growth rate of individual when *t* = *M*.
+* *t* = time
+
+###
+Commonly used to model growth that has a sigmoid shape, i.e. where growth is initially slow, then picks up to a maximum, then slows down again as the system reaches a maximum.
+
+Let's work out some start values for the model:
+
+* *C* use the maximum value of *y* in the raw data as the starting value.
+* *M* is the value of *t* when *y* = 0.5*C*, we can read an approximate value off the plot. 
+* *B* is hard to estimate but we can start with 1.
+
+
+```{r}
+# working out initial values
+# C = max value of y
+max(anthrax$Cases) # 115
+
+# M = value of t (year) when y = 1/2C, therefore 1/2 C:
+115/2 # 57.5
+# reading off previous plot, when y = 57.5, year = approx 9, M=9
+
+# Initial parameters
+log.mod<-c(Cp=57.5,Bp=1,Mp=9)
+
+# Fits logistic model
+mod_log<-nls(Cases~Cp/(1+exp(-Bp*(Year-Mp))),
+             data = anthrax, start=log.mod, trace=T)
+
+summary(mod_log)
+
+# Cases = 131.11 / (1 + exp(-0.67 * (Year - 9.85)))
+
+```
+
+Like the exponential model, we can use the `deviance()` function to obtain the RSS:
+
+```{r}
+deviance(mod_log) #337.701
+```
+
+And then we can also plot the mode to see how well the model fits visually.  
+
+### Plot the model
+
+```{r plot_mod_logistic}
+
+# Can skip this, did before:
+# new.year = seq(0,max(anthrax$Year),1) 
+
+# Use model to predict on these new values of x
+#Makes predictions onto temp.new
+pred.log<-predict(mod_log,list(Year=new.year))
+
+# overlay plot
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, pred.log) #Adds lines to original plot
+
+```
+
+Towards the bottom of the plot, the line does not fit the points as well as the exponential or quadratic, but up the top of the plot, we can see the slope is starting to plateau and reflects what is happening with the points. 
+
+The best way we can compare each of the models is to compare the RSS for each. 
+
+## Final comparisons
+
+###
+For an model object created with the `lm()` function we can use `anova()` to obtain the RSS, whereas for an `nls()` object we can use the `deviance()` function. 
+
+```{r}
+anova(mod) # 3646.3
+anova(mod_quad) # 602.9
+anova(mod_cub) # 564.5 
+deviance(mod_exp) # 1222.925
+deviance(mod_log) #337.701
+mod_log$m$deviance() #same
+sum(resid(mod_log)^2) #same
+```
+
+Observing each of the RSS values, we can see the lowest RSS is the logistic model. Based on the RSS we could say that the logistic model is most suitable for the data we have and our aims. 
+
+###
+Let's overlay our models onto the plot, with one line per plot:
+
+```{r plot_mod_all}
+par(mfrow=c(3,2))
+
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+abline(mod, col = "black")
+
+plot(anthrax$Year,log(anthrax$Cases),xlab='Year', ylab='Cases')
+abline(logmod, col = "gray")
+
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, new.pred_quad, col = "green")
+
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, new.pred_cub, col = "blue")
+
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, pred.exp, col = "red")
+
+plot(anthrax$Year,anthrax$Cases,xlab='Year', ylab='Cases')
+lines(new.year, pred.log, col = "purple") #Adds lines to original plot
+
+```
+
+
+
+## Weighing things up
+
+We found, based on the RSS, that our logistic model is more suitable for the data we have. 
+
+This is good, because non-linear models are more clearly linked to mechanistic processes; Logistic models are often used to model disease outbreak because of the built-in asymptote, or carrying capacity. Understanding when this carrying capacity may be met is helpful for disease management and health system planning. 
+
+The downside about the logistic model is that unlike a simple linear model, it is harder to interpret the fit, i.e. we can't really calculate an r^2^ and we can't easily do hypothesis testing. 
+
+###
+That's it for today, this is your initial glimpse at fitting non-linear models, and you will have a chance to build upon your knowledge in the lab classes. Any questions feel free to post to Ed. 
+
+
+## References
+
+* World Organisation for Animal Health (OIE), 2020, OIE World Animal Health Information System, https://wahis.oie.int/#/dashboards/qd-dashboard, date Accessed: 12/05/22
+* Centers for Disease Control and Prevention (CDC), 2022, What Is Anthrax?, Accessed: 14/5/2022, from https://www.cdc.gov/anthrax/basics/index.html
+* Sweeney, D.A., Hicks, C.W., Cui, X., Li, Y. and Eichacker, P.Q., 2011. Anthrax infection. American journal of respiratory and critical care medicine, 184(12), pp.1333-1341.
+
+
