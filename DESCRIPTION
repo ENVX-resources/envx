@@ -1,6 +1,6 @@
 Package: envx
 Title: ENVX: A package for ENVX Units at the University of Sydney
-Version: 0.0.0.9006
+Version: 0.0.0.9007
 Authors@R: c(
     person(
       "Januar", "Harianto", 
