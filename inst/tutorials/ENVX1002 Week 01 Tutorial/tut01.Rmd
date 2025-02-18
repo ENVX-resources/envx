@@ -1,0 +1,155 @@
+---
+title:  Tutorial 01
+author: 
+  - Januar Harianto
+  - ---
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output: 
+  learnr::tutorial:
+    theme: cosmo
+    language: 
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: "This tutorial will guide you through installing R, RStudio, and creating an RStudio project."
+---
+
+
+```{r setup, include=FALSE, eval=TRUE}
+library(learnr)
+```
+
+## Introduction
+
+Welcome to ENVX1002 tutorials. These tutorials are designed to complement your weekly computer lab sessions by providing practice exercises that introduce key concepts and techniques covered in the labs. 
+
+Each tutorial aligns with the current week's lab material so you can work through examples with your lecturer.
+
+**Tutorials are designed (mostly) as "live coding" sessions.** Your lecturer will guide you through a couple of exercises for you to follow along. Then, when you attend your lab, you will work through similar exercises with your demonstrators.
+
+### This tutorial is a `learnr` tutorial
+
+`learnr` is an *interactive* tutorial system that breaks down complex topics into manageable steps, helping you learn at your own pace. You can revisit sections as needed -- hopefully that helps you study better. For more information, see the `learnr` [website](https://rstudio.github.io/learnr/).
+
+### Tutorial Objectives
+
+In this tutorial, we will:
+
+- Install R from CRAN
+- Install RStudio Desktop
+- Set up Posit Cloud (alternative to local installation)
+- Configure RStudio settings for optimal use
+- Create our first R project
+
+
+## Installing R and RStudio
+
+We will go through the installation process together. A useful site to start is the [RStudio download page](https://posit.co/download/rstudio-desktop/) as it conveniently contains links to access both R and RStudio Desktop.
+
+
+Once you have installed R and RStudio, you should check that RStudio is working correctly. Some settings will also need to be adjusted. Let's go through this now.
+
+
+### Session info
+
+Open RStudio and type the following code into the console:
+
+```{r eval=FALSE}
+sessionInfo()
+```
+
+This will provide you with information about the versions of R and RStudio you are using. Make sure that it matches with the versions that you have installed.
+
+
+### General options
+
+We will go through this together but here are the settings that we will change:
+
+1. In `General` -> `Workspace`: 
+   - uncheck "Restore .RData into workspace at startup"
+   - Set "Save workspace to .RData on exit" to "Never"
+2. In `General` -> `History`: set "Save history" to "Never"
+
+![General options in RStudio with recommended settings. Credit: Januar](images/general.png){width=80%}
+
+### R Markdown options
+
+3. In `R Markdown` -> `R Markdown`: 
+   - check "Soft-wrap R Markdown files"
+   - Set "Show output preview in" to "Viewer Pane"
+
+![R Markdown options in RStudio with recommended settings. Credit: Januar](images/rmarkdown.png){width=80%}
+
+### More options
+
+You may adjust the settings further, we will discuss this in the tutorial.
+
+## Posit Cloud
+
+![](images/positcloud.png){width=100%}
+
+###
+
+You may need to use Posit Cloud for a variety of reasons. In most cases it is because you are unable to install the latest version of R and RStudio on your computer, or you simply do *not* have a computer. In this case you can use Posit Cloud to access RStudio through any web browser -- using your tablet device or a university computer.
+
+We will go through the process of setting up Posit Cloud together. This involves 
+
+- signing up for an account
+- navigating the interface, and 
+- creating a new R project
+
+Additionally, we will explore how to save your work and collaborate with others within Posit Cloud.
+
+### Before you decide...
+
+Posit Cloud was designed to be identical (well, almost) to RStudio Desktop. However, there are some limitations:
+
+- You **must** have an internet connection
+- Some advanced features are not available (but we don't use them in this unit anyway)
+- There are complications surrounding file management -- you can't access your local files directly unlike RStudio Desktop
+
+If you really want to use Posit Cloud and need more help, please approach us in the labs and we will help you.
+
+
+### Links
+
+Some useful links:
+
+- [Work with Data](https://docs.posit.co/cloud/guide/data/): some documentation on how to import and export data such as CSV files in Posit Cloud.
+- [Code Projects](https://docs.posit.co/cloud/guide/projects/): information regarding managing your R projects in Posit Cloud.
+
+
+## Creating an RStudio Project
+
+RStudio projects help you organise your work by keeping all files for a project together in one directory. We will demonstrate how to create one live in class, but here are the key points to remember:
+
+- Nothing changes in your R environment when you create a project, except for a `.Rproj` file in your project directory (a text file!)
+- Projects keep all your files (data, scripts, outputs) organised in one place
+- They make file paths relative and consistent
+- They help with version control (which we'll cover later)
+- **They make it easier to share your work** -- great for group projects
+
+### To create a new R project
+
+1. Click File > New Project
+2. Choose either:
+   - New Directory (for a fresh project)
+   - Existing Directory (to turn current folder into a project)
+3. Follow the setup wizard
+
+We will create an example project together in class.
+
+## Extra time
+
+If there is extra time, we will demonstrate some useful tips.
+
+## Thanks
+
+You have reached the end of this tutorial. We hope that this tutorial has helped you set up your RStudio environment. If you have any questions, jump onto Ed discussion board and ask away. See you next week!
