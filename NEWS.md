@@ -1,5 +1,20 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9008 (2025-02-20)
+
+## Refactoring
+
+### list_tutorials
+
+- Remove interactive prompts and add direct tutorial access.
+
+  - Add optional tutorial parameter for direct access
+  - Remove interactive y/n prompts
+  - Add input validation for tutorial numbers
+  - Return tutorial data frame invisibly
+  - Update documentation with examples
+
+
 # envx 0.0.0.9007 (2025-02-18)
 
 ## Chore
