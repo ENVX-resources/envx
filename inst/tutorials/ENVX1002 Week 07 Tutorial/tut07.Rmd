@@ -25,7 +25,9 @@ description: "This tutorial will guide you through the steps to perform a two-sa
 library(tidyverse)
 library(learnr)
 library(downloadthis)
+library(DT)
 knitr::opts_chunk$set(echo = TRUE)
+beetle <- read_csv("beetle.csv")
 ```
 
 ## Introduction
@@ -137,15 +139,19 @@ This exercise is based on the same data used in Lecture 7a. Download the data by
 
 
 ```{r message=FALSE, echo=FALSE}
-download_file(
-  path = "beetle.csv",
-  output_name = "beetle.csv",
-  button_label = "Download beetle.csv",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# download_file(
+#   path = "beetle.csv",
+#   output_name = "beetle.csv",
+#   button_label = "Download beetle.csv",
+#   button_type = "danger",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
+
+# Use the function
+envx::download_button(beetle, "beetle.csv", "Download Beetle Data")
+
 ```
 
 ### Background
