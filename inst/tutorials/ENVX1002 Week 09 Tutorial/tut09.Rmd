@@ -32,30 +32,26 @@ knitr::opts_chunk$set(
 
 ## What we will cover in this tutorial
 
-We will build upon what has been covered in the lecture, focussing on understanding relationships between data and then fitting a simple linear model to this relationship. 
+We will build upon what has been covered in the lecture, focussing on understanding relationships between data and then fitting a simple linear model to this relationship.
 
-In the lecture I mentioned there were two ways to fit a linear regression - analytical and numeric, so I will fit the model both ways, demonstrating this in excel. Then once we have a grasp of the underlying concepts, I will then show you how we fit simple linear models in R, which is much easier as the underlying equations have been done for us. 
+Recall there are two ways to fit a simple linear regression -- **analytical** and **numerical**. We will fit a model with both approaches in Excel, and then numerically in R.
 
-The steps we will follow in this tutorial will be similar to what you will encounter in the practical. The tutorial will equip you with what you need to know, and from then in the practical you will able to lead your own learning a bit more.
+The steps we will follow in this tutorial will be similar to what you will encounter in the practical, so in the practical you will able to lead your own learning a bit more.
 
 ## The data for this tutorial
 
-I have selected a single dataset for this tutorial so we can compare the outcomes from each fitting method. 
-
-We will be using the Global Power Plant Database compiled by the World Resources Institute. 
-
-More information about the dataset is available here: https://datasets.wri.org/dataset/540dcf46-f287-47ac-985d-269b04bea4c6 
+We will be using the [Global Power Plant Database](https://datasets.wri.org/dataset/540dcf46-f287-47ac-985d-269b04bea4c6) compiled by the World Resources Institute. 
 
 I have left the data as-is so we can have a quick look over it before starting our analyses.
 
-Download the data: 
+Download the data by clicking the button below:
 
 ```{r message=FALSE, echo=FALSE}
 
 downloadthis::download_file(
-  path = "ENVX1002_Tutorial_Describing_relationships.xlsx",
-  output_name = "ENVX1002_Tutorial_Describing_relationships",
-  button_label = "Download ENVX1002_Tutorial_Describing_relationships.xlsx",
+  path = "ENVX1002_tut09.xlsx",
+  output_name = "ENVX1002_tut09.xlsx",
+  button_label = "Download ENVX1002_tut09.xlsx",
   button_type = "danger",
   has_icon = TRUE,
   icon = "fa fa-save",
@@ -69,8 +65,6 @@ downloadthis::download_file(
 
 ### Our scientific question
 
-Don't forget to download the data (click on the red button in the previous section, which you can navigate to again from the sidbar to the left).
-
 With increased power plant capacity, is there more power being generated?
 
 </div>
@@ -80,25 +74,30 @@ With increased power plant capacity, is there more power being generated?
 
 ### What are the types of data within the Database?  
 
-Open the Excel file, and have a look around. A typical multivariate dataset is almost always in "long" (or tidy) format, where every column is a variable and every row is an observation. However, this may not always be the case, so looking at the data is always a good idea (if Excel can handle the file size).
+Open the Excel file (.xlsx), and have a look around -- what is the format? How many sheets?
 
-Notice that the dataset has many columns. *If you know how to look, there are 800,000 data points in this dataset!*
+Like many multivariate datasets, it is in "long" (or tidy) format, where every column is a variable and every row is an observation. Notice that the dataset has many columns and *800,000 data points in this dataset!*
 
 **How would you make sense of this data?**
 
 ###
-In general, we want to first think about what data is available and how useful they are for our specific research question. We need to be able to identify continuous, categorical, and ordinal data.
+In general, we first consider what data is available -- continuous, categorical, and ordinal data. What do each of the columns represent?
 
-Recalling the scientific question, we are interested in the relationship between power plant capacity and power generation -- which variables in the dataset are relevant to this question?
+Recalling the scientific question, we are interested in the relationship between **power plant capacity** and **power generation** -- which columns/variables are relevant to this question?
 
-
-###
-We will focus on the columns `capacity_mw` and `generation_gwh_2019`, which is the reported generation of each power plant for 2019. **What type of data are these two selected columns?**
 
 ###
-To make the instructions more concise, I have isolated the columns of interest and pasted them into a dedicated sheet for each exercise. I have added `x_` to `capacity` (now `x_capacity_mw`), and `y_` to `generation` (now `y_generation_gwh_2019`) to make things easier in our calculations. 
+In this example we focus on just `Nuclear` farms/power plants. We will focus on the columns:
 
-We will also only include values where `generation_gwh_2019` is > 0. Some power plants recorded zero generation and even negative numbers, most likely due to the plants being shut down for maintenance. We are excluding these values as we only want instances where power was actually generated for that year. 
+- `capacity_mw` -- the capacity of each power plant in megawatts
+- `generation_gwh_2019` -- the reported generation of each power plant for 2019
+
+**What type of data are these two selected columns?**
+
+###
+To make the instructions more concise, there are dedicated sheets for each exercise with just our columns of interest (which we rename to `x_capacity_mw` and `y_generation_gwh_2019`) to make things easier in our calculations. We also have subset the rows where `primary_power == Nuclear`.
+
+Some power plants recorded zero generation and even negative numbers, most likely due to the plants being shut down for maintenance. We exclude these values as we only want instances when the power plant was operating normally. So we only include values where `generation_gwh_2019` is > 0.
 
 ### Using formulas in Excel, what can we say about the spread and centre of the data?
 
@@ -116,15 +115,15 @@ In R, we use the `summary()` and `str()`/`glimpse()` functions to quickly explor
 
 Sometimes functions can be hard to remember, so if you are ever stuck, you can search for functions by clicking the **"Formulas"** tab in Excel. 
 
-**Question d**: What can we say about the relationship between the two variables? To calculate this in Excel, we can use `CORREL()`.
+**Question**: What can we say about the relationship between the two variables?
 
 Now we have explored the data, we can proceed to fitting a model.
 
 ## Exercise 2: Analytical fitting
 
-Analytical fitting is where we fit the model based on equations. We will use Excel for this rather than writing it out by hand as Excel gives us a bit of automation, rather than typing every single value of this large dataset our calculators. 
+Analytical fitting is where we fit the model based on equations. We will use Excel to set up our equations (rather than writing it out by hand and using calculators).
 
-So we can set up our equations in excel, here are the equations we will be working with: 
+Here are the equations we will be working with: 
 
 The equation for our sample regression line is: 
 
@@ -143,45 +142,47 @@ $$b_0 = \bar{y} – b_1 \bar{x}$$
 From here, we can then jump into Excel and fill in the columns. 
 
 ###
-For this exercise we will be working in the sheet labelled **Analytical_fitting**.  
+For this exercise we will be working in the sheet labelled **Analytical_fitting**.
 
-1. The column labelled `x-meanx` will be the first component of the slope equation ($x_i – \bar{x}$). We can calculate the value using the first cell in `x_capacity_mw`, subtracting the mean value and then double click to autofill down the page. 
-
-For example, I have input `=A2-$I$2` ;  where I2 is the mean of `x_capacity_mw`, and I have used `$` to tell Excel to hold the value when autofilling down the page. 
+1. First we need to calculate the mean of `x_capacity_mw` (mean*x*) and `y_generation_gwh_2019` (mean*y*). We can do this using the `AVERAGE()` function.
 
 ###
-2. The column labelled `(x-mean)2` is the denominator component of the equation ($(x_i – \bar{x})^2$), but as it is directly related to the column next to it, we keep them together. 
+2. The column labelled `x-meanx` is the first component of the slope equation ($x_i – \bar{x}$). We can calculate the value using the first cell in `x_capacity_mw`, subtracting the mean value and then double click (the little green box in the bottom right corner of the cell) to autofill down the page. 
 
-For example, I have input `=C2^2` and double-clicked the bottom of the cell to autofill down the page. 
+For example, I have input `=A2-$I$2`, where I2 is the mean of `x_capacity_mw`, and I have used `$` to tell Excel to keep using column I ($I) and row 2 ($2) when autofilling down the page.
 
 ###
 3. The column labelled `y-meany`, makes up the final portion of the equation ($y_i – \bar{y}$). We can calculate this value using the first cell in `y_generation_gwh_2019` and subtracting the mean of this column, then double-clicking to autofill. 
 
-For example, I have input `=B2-$I$3` ; cell I3 is where I have placed the mean of y_generation_gwh_2019, and I have used $ to tell Excel to hold the value when autofilling down the page. 
+For example, I have input `=B2-$I$3` ; cell I3 is where I have placed the mean of y_generation_gwh_2019. 
 
 ###
-4.  Then we can calculate the numerator of the equation by multiplying our `x-meanx` and `y-meany` columns. I have labelled this new column `product`.
+4.  Then we can calculate the numerator of the equation by multiplying our `x-meanx` and `y-meany` columns. I have labelled this new column `product_xy`.
 
-For example, In the first cell of the `product` column I have input `=C2*E2` and autofilled.  
-
-###
-5. From here we can calculate $SS_{xy}$, calculating the `SUM()` of the `product` column, and then we can calculate $SS_{xx}$ by calculating the `SUM()` of the `(x-mean)2` column. Please store the $SS_{xy}$ result in cell I5, and $SS_{xx}$ in cell I6. 
+For example, In the first cell of the `product` column I have input `=C2*D2` and autofilled.  
 
 ###
-6. Once we have calculated $SS_{xy}$ and $SS_{xx}$, we have all the components we need to calculate the slope estimate ($b_1$). We do this by dividing $SS_{xy}$/$SS_{xx}$. 
 
-In my example I have done this by putting the following equation into cell I8:  `=I5/I6`. 
+5. The column labelled `product_xx` is the denominator component of the equation ($(x_i – \bar{x})^2$).
+
+For example, I have input `=C2^2` and double-clicked the bottom of the cell to autofill down the page. 
 
 ###
-7. To calculate $b_0$, as per the equation we subtract the slope multiplied by the mean of x, from the mean of y;. 
+6. From here we can calculate $SS_{xy}$, calculating the `SUM()` of the `product` column, and then we can calculate $SS_{xx}$ by calculating the `SUM()` of the `product_xx` column. I have stored them in cell I5 and I6 respectively.
+
+###
+7. Now we have all the components we need to calculate the slope estimate ($b_1$). We do this by dividing $SS_{xy}$/$SS_{xx}$. 
+
+In my example I have done this by putting the following equation into cell I8: `=I5/I6`. 
+
+###
+8. To calculate $b_0$, as per the equation we subtract the slope multiplied by the mean of $x$, from the mean of $y$. 
 
 For example, I calculated $b_1$ in cell I8, and so the equation I have used is: `=I3-(I8 * I2)`.
 
-### Quick questions
+### Quick question
 
 a. Based on our results, what would the equation of our line be?
-b. How does this compare to the equation obtained from the plot?
-
 
 ## Exercise 3: Numerical fitting
 
@@ -189,20 +190,20 @@ We will now have a go at numerical fitting and see how different the output is t
 
 Numerical fitting is where the computer generates a series of random guesses until the optimal residual sum of squares (RSS) is found. We can do this in Excel using the Solver add-in.
 
-To install Solver, I have created a separate resource, which you can find on the page for this tutorial, and I have included it on the practical page for easy reference. 
+To install Solver -- File tab > Options > Add-ins > Solver Add-in > Ok. There is also some more detailed instructions on the tutorial and practical page for reference. We can access Solver in the Data tab.
 
-Solver is going to take into account a slope and intercept value, and guess the right combination to obtain the lowest RSS. We therefore need to provide 1) Slope ($b_1$), 2) Intercept ($b_0$), and 3) the RSS. We already have the first two values, but we need to calculate an RSS for Solver to start with.  Let's get to work!
+Solver is going to take into account a slope and intercept value, and guess the right combination to obtain the lowest RSS. We therefore need to provide 1) Slope ($b_1$), 2) Intercept ($b_0$), and 3) the RSS. We already have the first two values, but we need to calculate an RSS for Solver to start with. Let's get to work!
 
 ###
-**VERY IMPORTANT**: You will notice in the data prep we will be using cell references rather than typing in discrete values (e.g. =I8, instead of 4.2707). If this is not done, the RSS will not update when Solver changes the $b_1$ and $b_0$ values. 
+**VERY IMPORTANT**: You will notice in the data prep we will be using cell references rather than typing in discrete values (e.g. =I8, instead of the number). If this is not done, the RSS will not update when Solver changes the $b_1$ and $b_0$ values. 
 
 ### Data preparation for Solver
 
 For this exercise we will be working in the worksheet labelled **Numerical_fitting**. 
 
-1. In the column labelled **predicted**, you will use the model equation and coefficients to predict the values of y. 
+1. In the column labelled **predicted**, you will use the model equation and estimated coefficients to predict the values of $y$ (**y_generation_gwh_2019**).
 
-We could use any value for $b_1$ and $b_0$ as they are only starting values for Solver to work with, but here we will use the model equation and coefficients we obtained in our analytical fitting as a starting point. 
+We could use any value for $b_1$ and $b_0$ as they are only starting values for Solver to work with, but here we will use the model equation and coefficients we obtained in our analytical fitting as a starting point.
 
 Therefore, in cells I4 and I5, place your slope ($b_1$) and intercept ($b_0$) values we obtained earlier.  You can then use these values to predict power generation by substituting the slope, intercept and **x_capacity_mw** values into the model equation. 
 
@@ -218,17 +219,19 @@ Now you will have the 3 cells required for Solver to do some solving.
 
 ### Running Solver
 
-5. In excel, click the **Files** tab, click **Options** and then **Add-ins**. At the bottom of that page, where it says 'Manage', ensure "Excel Add-ins' is selected and click **Go**. 
+5. In Excel, click the **Files** tab, click **Options** and then **Add-ins**. At the bottom of that page, where it says 'Manage', ensure "Excel Add-ins' is selected and click **Go**. 
 
-A small window will pop up where you then need to tick the box next to 'Solver'. Click **Ok**. 
+A small window will pop up where you then need to tick the box next to 'Solver'. Click **Ok**.
 
-6. You can then open Solver by clicking the **Data** tab and to the far right you should see 'Solver', which you can click to open the add-in. 
+6. You can then open Solver by clicking the **Data** tab and to the far right you should see 'Solver', which you can click to open the add-in.
 
-7. When the solver window opens, the first thing you need to input is the "Objective". This is the cell that is going to change based on the combinations being tested by Solver. Here you will input the cell reference for wherever you have calculated the RSS; in my example, I have calculated it in cell I2. 
+7. When the Solver window opens, the first thing you need to input is the **"Objective"**. This is the cell that is going to change based on the combinations being tested by Solver. Here you will input the cell reference for wherever you have calculated the RSS; in my example, I have calculated it in cell I2. 
 
 8. As we want to minimise the RSS and therefore want Solver to stop when it reaches the smallest value; where it says "To", you need to select the **Min** option. 
 
 9. Solver is going to change the slope and intercept, so in the next box "By changing the variable cells:", we add in the cell references for where we have placed $b_0$ and $b_1$. 
+
+**Note**: Even though we want to fit a linear model, if we try "Selecting a Solving Method" as `Simplex LP`, it will give us an error -- because the assumption of linearity is not met by the data. We will discuss what this means next week. For now, we use the `GRG Nonlinear` options.
 
 10. You can then click **Solve** and see what happens to your $b_1$ and $b_0$ values. 
 
@@ -236,10 +239,7 @@ A small window will pop up where you then need to tick the box next to 'Solver'.
 
 a. Did Solver change anything for your data?
 
-b. Make a scatterplot of your x and y variables, add a trendline and show the equation and r^2^ value. How did the r^2^ value change- did it get smaller, larger, or stay the same? 
-
-**Update:** We can check this because Solver has calculated the intercept to be zero. Therefore, to find the r^2^ for the Solver solution, we can right click,  **Format Trendline...** and in the settings, tick the box that says "Set intercept" and see how different the r^2^ is. 
-
+b. Make a scatterplot of your $x$ and $y$ variables, add a trendline and show the equation and R^2^ value. Is it the same as Solver?
 
 ## Exercise 4: Fitting in R
 
@@ -257,7 +257,7 @@ For this exercise we will use the sheet labelled **r_lm**.
 
 library(readxl)
 
-dat = read_xlsx("ENVX1002_Tutorial_Describing_relationships.xlsx", sheet="r_lm")
+dat = read_xlsx("ENVX1002_tut09.xlsx", sheet="r_lm")
 
 ```
 
@@ -313,7 +313,7 @@ ggplot(dat, aes(x=x_capacity_mw, y=y_generation_gwh_2019)) +
 
 a. Looking at the model summary, where can we find out the values for slope ($b_1$) and intercept ($b_0$)?
 b. What would the equation of our fitted line be?
-c. Is the r^2^ the same as what we ended up with in Excel?
+c. Is the R^2^ the same as what we ended up with in Excel?
 d. How would we conclude and answer our scientific question?
 
 That's it for now, excellent work getting through this tutorial. Now you are ready for the prac!

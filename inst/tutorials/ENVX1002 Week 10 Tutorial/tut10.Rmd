@@ -1,0 +1,225 @@
+---
+title: Simple Linear Regression
+author: 
+  - Si Yang Han
+  - ----
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ----
+output: 
+  learnr::tutorial:
+    theme: cosmo
+    language: 
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(
+	cache = TRUE,
+	output = FALSE
+)
+```
+
+## What we will cover in this tutorial
+
+We will build upon what has been covered in the lecture, focussing on fitting a simple linear model, the assumptions, and the interpretation.
+
+The steps we will follow in this tutorial should be quite familiar, so you you will be ready for the practicals.
+
+## The data for this tutorial
+
+We will be looking at the same power plant dataset as last week -- [Global Power Plant Database](https://datasets.wri.org/dataset/540dcf46-f287-47ac-985d-269b04bea4c6) compiled by the World Resources Institute. 
+
+Last time we subset `Nuclear` power plants, and investigated the research question of whether higher power plant capacity was related to more power generated. This week - we'll explore the data further.
+
+Download the data by clicking the button below:
+
+```{r message=FALSE, echo=FALSE}
+
+downloadthis::download_file(
+  path = "ENVX1002_tut10.xlsx",
+  output_name = "ENVX1002_tut10",
+  button_label = "Download ENVX1002_tut10.xlsx",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
+
+## Exploring the data
+
+Many interesting findings can come from simple data analysis. The more variables, the more there is to explore. Feel free to play around with the dataset and ask your own research questions!
+
+I was interested in the differences between power plants based on the primary fuel they use.
+
+First -- I will reformat the data to make it easier to work with. Most of the work as a data analyst is data cleaning (e.g. compiling different datasets, removing NA values or unusual outliers, restructing the dataframe). This combines all the annual generated energy (`generation_gwh_XXXX`) columns into one, with a new column called `Year`.
+
+```{r, exercise = TRUE}
+library(readxl)
+dat = read_xlsx("ENVX1002_tut10.xlsx") # there is only one sheet in the Excel file
+
+# change to long format - year doesn't matter
+dat <- dat |>
+  tidyr::pivot_longer(cols = starts_with("generation_gwh_"), 
+                      names_to = "year", 
+                      values_to = "generation_gwh")
+```
+
+### 
+
+Exploring the data from around the world:
+
+- How much data do we have for each fuel type aka what is most common? **Solar**
+- How does power plant capacity differ between primary fuels? Which tend to have the highest capacity? **Nuclear**
+- How does power generation differ between primary fuels? Which tend to generate the most power per year? **Nuclear**
+
+```{r}
+# barplot of primary fuel observations
+dat$primary_fuel |> table() |> # count the number of rows for each type of primary fuel
+  barplot(las = 2, xlab = "Primary Fuel", ylab = "Frequency") # plot in a barplot, `las = 2` rotates the x-axis labels
+
+# boxplot capacity vs primary fuels
+boxplot(dat$capacity_mw ~ dat$primary_fuel, 
+        las = 2, ylim = c(0,5000), # set the y-axis limits so plot doesn't have to display very high values
+        xlab = "Primary Fuel", ylab = "Capacity (MW)")
+
+# boxplot generation vs primary fuels
+boxplot(dat$generation_gwh ~ dat$primary_fuel, 
+        las = 2, ylim = c(0,40000),
+        xlab = "Primary Fuel", ylab = "Generation (GWh)")
+```
+
+### 
+
+How about in Australia?
+
+- What is the most common primary fuel for Australian power plants?
+- How does power plant capacity differ between primary fuels in Australia?
+- Which tend to generate the most power per year?
+
+```{r, exercise = TRUE}
+# Subset the Australian dataset
+```
+
+###
+
+So power plants that are designed to have a bigger capacity will output more power. The real question is: how efficient are these power plants? To calculate this:
+
+$$ \text{efficiency} = \frac{\text{generated power}}{\text{maximum capacity}} \cdot 100\% $$
+- `capacity_mw` is the maximum power output of the power plant for an hour
+- `generation_ghw` is the total power generated in a year
+
+To calculate maximum capacity, we can multiply `capacity_mw` by the number of hours in a year (24 x 365 hours), then convert from megawatts (MW) to gigawatts (GW) (/ 1000). Let's do this on a global scope, so we can compare more types of power plants.
+
+```{r}
+# calculate efficiency
+dat$max_capacity_gwh <- dat$capacity_mw * 24 * 365 / 1000
+dat$efficiency <- dat$generation_gwh / dat$max_capacity_gwh * 100
+
+# remove outliers
+# dat <- dat |> filter(efficiency < 200, efficiency > 10)
+dat <- dat[dat$efficiency < 200 & dat$efficiency > 10, ] # any powerplant operating outside these ranges seem suspicious
+
+# boxplot efficiency vs primary fuels
+boxplot(dat$efficiency ~ dat$primary_fuel, 
+        las = 2,
+        xlab = "Primary Fuel", ylab = "Efficiency (%)")
+
+```
+
+###
+
+Some interesting findings:
+
+- Many power plants exceed the maximum capacity (i.e. overloading the grid) -- but not very safe. The outliers could be worth investigating.
+- Nuclear power does not exceed maximum capacity because an overload = meltdown! It is also the most efficient power source.
+- Solar power and (battery) storage are the least efficient.
+
+###
+
+Again, how does the Australian data compare?
+
+- Are there many power plants that exceed total capacity (GWh)?
+- What is the most efficient primary fuel in Australia?
+- How do renewables (hydro, solar, wind) compare to fossil fuels in terms of efficiency?
+
+```{r, exercise = TRUE}
+# Subset the Australian dataset
+
+```
+
+## Simple Linear Regression
+
+Last week, we fit a simple linear regression for nuclear power plants -- capacity vs generated power. This week, I will test a different research question. If you feel confident with linear regression, feel free to pick any question you like!
+
+First we visualise our data. When choosing a research question...
+
+- Which plots (i.e. relationships) look easy to model? (i.e. linear, no fanning)
+- Is there enough data? Ideally we'd like 30+ points (reliability).
+
+There are methods to deal with non-linear relationships (e.g. transformation), but the methods to deal with fanning in linear data is beyond the scope of this course (more complex models).
+
+```{r, exercise = TRUE}
+# simple linear regression
+aus_dat <- dat |>
+  filter(country == "AUS") |> # subset only Australian power plants
+  dplyr::select(latitude, longitude, capacity_mw, generation_gwh, efficiency, year, primary_fuel) |> # subset some columns for a smaller, cleaner df
+  na.omit() # remove any rows with missing values
+
+ggplot(aus_dat, aes(x = capacity_mw, y = generation_gwh, color = as.factor(primary_fuel))) +
+  geom_point() +                                    # Scatterplot points
+  facet_wrap(~ primary_fuel, scales = "free") +     # Separate plots for each primary fuel
+  theme_classic() +                                 # Clean theme
+  labs(x = "Capacity (MW)", y = "Generation (GWh)", # Axis labels
+       color = "Primary Fuel")                      # Remove legend title
+
+```
+
+
+<br>
+
+<div class="pad-box-mini" style="border: 1px solid gray; padding-left:10px; background-color:#d7ecf8">
+
+### Our scientific question
+
+Pick a country and fuel type - is there a linear relationship between power plant capacity and generated power?
+
+</div>
+
+Steps for SLR:
+
+1. Understand the variables (capacity_mw vs generation_ghw)
+2. Explore data (scatterplot, correlation)
+3. Fit model (`lm()`)
+4. Check assumptions (`plot(mod)`, `ggplot2::autoplot(mod)`)
+5. Assess model fit (`summary(mod)`, p-values, hypothesis test/s)
+6. Interpret output (equation, R^2^, residual standard error)
+
+```{r, exercise = TRUE}
+# subset the data
+dat_coal <- dat |>
+  filter(country == "AUS", primary_fuel == "Coal") |> # subset only coal power plants
+  dplyr::select(capacity_mw, generation_gwh) |> # subset only capacity and generation columns
+  na.omit() # remove any rows with missing values
+
+# what is the correlation?
+
+# fit a linear model and check assumptions
+# library(ggfortify)
+# ggplot2::autoplot(mod) # another way to obtain assumption plots
+
+# try transforming - does it help?
+
+# summary() and interpret
+
+```
+
