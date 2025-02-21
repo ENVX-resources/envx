@@ -15,8 +15,8 @@ RoxygenNote: 7.3.2
 Suggests: 
     testthat
 Imports: 
+    base64enc,
     car,
-    downloadthis,
     dplyr,
     ggplot2,
     learnr,
