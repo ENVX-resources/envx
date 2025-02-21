@@ -25,32 +25,19 @@ description: "This tutorial will guide you through the steps to perform a two-sa
 library(tidyverse)
 library(learnr)
 library(downloadthis)
+library(DT)
 knitr::opts_chunk$set(echo = TRUE)
+# set up files for download
+beetle <- read_csv("beetle.csv")
+download_beetle <- envx::download_button(beetle, "beetle.csv", "Download beetle.csv")
 ```
 
 ## Introduction
 
 ![](images/usyd_horizontal.svg)
 
-### The `envx` package
 
-This tutorial is now available in the `envx` package on GitHub, which allows you to access tutorials locally *and* directly from your R console. While the package is in *very early* development, it may be useful for students who are having difficulties accessing tutorials via Binder, and so we have released it with no other features at this time.
-
-**To install the package, run the following code:**
-
-```r
-install.packages("remotes")
-remotes::install_github("ENVX-resources/envx")
-```
-
-Then load the package and use `list_tutorials()` to select the tutorial you want to run:
-
-```r
-library(envx)
-list_tutorials()
-```
-
-### Introduction
+### Welcome
 
 This tutorial will focus on running non-parametric versions of the *t*-test. The `wilcox.test()` function in R is used to perform the following tests:
 
@@ -58,6 +45,15 @@ This tutorial will focus on running non-parametric versions of the *t*-test. The
 - **Wilcoxon rank-sum test (Mann-Whitney U test)** -- a non-parametric version of the two-sample *t*-test
 
 Work through the tutorial by answering the questions and completing the exercises. We recommend that you create your own Quarto document if you wish to record your answers and code.
+
+### 
+
+Please download the file(s) below and save them where you can load them.
+
+```{r, echo=FALSE}
+download_beetle
+```
+
 
 ### Learning outcomes
 
@@ -133,19 +129,11 @@ Ok, that was a lot of text. No quizzes this time, let's get started!
 
 ## Exercise 1: Beetles
 
-This exercise is based on the same data used in Lecture 7a. Download the data by clicking on the button below.
+This exercise is based on the same data used in Lecture 7a. if you have not already done so in the first page, download the data by clicking on the button below.
 
 
 ```{r message=FALSE, echo=FALSE}
-download_file(
-  path = "beetle.csv",
-  output_name = "beetle.csv",
-  button_label = "Download beetle.csv",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+download_beetle
 ```
 
 ### Background

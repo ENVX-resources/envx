@@ -2,14 +2,23 @@
 % Please edit documentation in R/list_tutorials.R
 \name{list_tutorials}
 \alias{list_tutorials}
-\title{List available tutorials and open if asked}
+\title{List available tutorials and optionally open a specific tutorial}
 \usage{
-list_tutorials()
+list_tutorials(tutorial = NULL)
+}
+\arguments{
+\item{tutorial}{Optional numeric value indicating which tutorial to open}
 }
 \value{
-A list of available tutorials, and opens the selected tutorial if
-requested
+Invisibly returns a data frame of available tutorials
 }
 \description{
-List available tutorials and open if asked
+List available tutorials and optionally open a specific tutorial
+}
+\examples{
+# List all available tutorials
+list_tutorials()
+
+# Open tutorial number 2 directly
+list_tutorials(2)
 }
