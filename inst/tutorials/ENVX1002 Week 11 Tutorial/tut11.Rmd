@@ -98,16 +98,16 @@ Therefore we will explore the predictors through correlation analysis and select
 Download the data by clicking the button below:
 
 ```{r message=FALSE, echo=FALSE}
-
-downloadthis::download_file(
-  path = "ENVX1002_tut11.csv",
-  output_name = "ENVX1002_tut11",
-  button_label = "Download ENVX1002_tut11.csv",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+# 
+# downloadthis::download_file(
+#   path = "ENVX1002_tut11.csv",
+#   output_name = "ENVX1002_tut11",
+#   button_label = "Download ENVX1002_tut11.csv",
+#   button_type = "danger",
+#   has_icon = TRUE,
+#   icon = "fa fa-save",
+#   self_contained = FALSE
+# )
 ```
 
 ### Reading in data 

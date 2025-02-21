@@ -24,8 +24,13 @@ description: "This tutorial will guide you through the steps to perform a two-sa
 ```{r setup, eval=TRUE, include=FALSE}
 library(tidyverse)
 library(learnr)
-library(downloadthis)
 knitr::opts_chunk$set(echo = TRUE)
+
+button <- envx::create_download_button(
+  "beetle.csv",
+  button_label = "Download beetle.csv"
+)
+
 ```
 
 ## Introduction
@@ -58,6 +63,14 @@ This tutorial will focus on running non-parametric versions of the *t*-test. The
 - **Wilcoxon rank-sum test (Mann-Whitney U test)** -- a non-parametric version of the two-sample *t*-test
 
 Work through the tutorial by answering the questions and completing the exercises. We recommend that you create your own Quarto document if you wish to record your answers and code.
+
+### 
+
+Please download the file(s) below and save them where you can load them.
+
+```{r, echo=FALSE}
+button
+```
 
 ### Learning outcomes
 
@@ -137,15 +150,7 @@ This exercise is based on the same data used in Lecture 7a. Download the data by
 
 
 ```{r message=FALSE, echo=FALSE}
-download_file(
-  path = "beetle.csv",
-  output_name = "beetle.csv",
-  button_label = "Download beetle.csv",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+button
 ```
 
 ### Background

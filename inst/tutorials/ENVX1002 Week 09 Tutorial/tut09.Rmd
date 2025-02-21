@@ -47,8 +47,7 @@ I have left the data as-is so we can have a quick look over it before starting o
 Download the data by clicking the button below:
 
 ```{r message=FALSE, echo=FALSE}
-# Create download button using the new package function
-create_download_button(
+envx::create_download_button(
   "ENVX1002_tut09.xlsx",
   button_label = "Download ENVX1002_tut09.xlsx"
 )

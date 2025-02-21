@@ -26,6 +26,11 @@ knitr::opts_chunk$set(
 	cache = TRUE,
 	output = FALSE
 )
+
+button <- envx::create_download_button(
+  "ENVX1002_tut10.xlsx",
+  button_label = "Download ENVX1002_tut10.xlsx"
+)
 ```
 
 ## What we will cover in this tutorial
@@ -43,16 +48,7 @@ Last time we subset `Nuclear` power plants, and investigated the research questi
 Download the data by clicking the button below:
 
 ```{r message=FALSE, echo=FALSE}
-
-downloadthis::download_file(
-  path = "ENVX1002_tut10.xlsx",
-  output_name = "ENVX1002_tut10",
-  button_label = "Download ENVX1002_tut10.xlsx",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
+button
 ```
 
 ## Exploring the data
@@ -63,7 +59,19 @@ I was interested in the differences between power plants based on the primary fu
 
 First -- I will reformat the data to make it easier to work with. Most of the work as a data analyst is data cleaning (e.g. compiling different datasets, removing NA values or unusual outliers, restructing the dataframe). This combines all the annual generated energy (`generation_gwh_XXXX`) columns into one, with a new column called `Year`.
 
-```{r, exercise = TRUE}
+```{r, include=FALSE}
+# since exercises aren't executed we run the exact code first
+library(readxl)
+dat = read_xlsx("ENVX1002_tut10.xlsx") # there is only one sheet in the Excel file
+
+# change to long format - year doesn't matter
+dat <- dat |>
+  tidyr::pivot_longer(cols = starts_with("generation_gwh_"), 
+                      names_to = "year", 
+                      values_to = "generation_gwh")
+```
+
+```{r load-data, exercise = TRUE}
 library(readxl)
 dat = read_xlsx("ENVX1002_tut10.xlsx") # there is only one sheet in the Excel file
 
@@ -106,7 +114,7 @@ How about in Australia?
 - How does power plant capacity differ between primary fuels in Australia?
 - Which tend to generate the most power per year?
 
-```{r, exercise = TRUE}
+```{r explore-aus-data, exercise = TRUE}
 # Subset the Australian dataset
 ```
 
@@ -152,7 +160,7 @@ Again, how does the Australian data compare?
 - What is the most efficient primary fuel in Australia?
 - How do renewables (hydro, solar, wind) compare to fossil fuels in terms of efficiency?
 
-```{r, exercise = TRUE}
+```{r calculate-aus-efficiency, exercise = TRUE}
 # Subset the Australian dataset
 
 ```
@@ -168,7 +176,7 @@ First we visualise our data. When choosing a research question...
 
 There are methods to deal with non-linear relationships (e.g. transformation), but the methods to deal with fanning in linear data is beyond the scope of this course (more complex models).
 
-```{r, exercise = TRUE}
+```{r visualize-relationships, exercise = TRUE}
 # simple linear regression
 aus_dat <- dat |>
   filter(country == "AUS") |> # subset only Australian power plants
@@ -204,7 +212,7 @@ Steps for SLR:
 5. Assess model fit (`summary(mod)`, p-values, hypothesis test/s)
 6. Interpret output (equation, R^2^, residual standard error)
 
-```{r, exercise = TRUE}
+```{r fit-linear-model, exercise = TRUE}
 # subset the data
 dat_coal <- dat |>
   filter(country == "AUS", primary_fuel == "Coal") |> # subset only coal power plants
@@ -222,4 +230,3 @@ dat_coal <- dat |>
 # summary() and interpret
 
 ```
-
