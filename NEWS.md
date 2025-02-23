@@ -1,5 +1,68 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9009 (2025-02-24)
+
+## Features
+
+### tutorial-01
+
+- Fix some typos, add more exercises.
+
+- Add create_download_button function for file downloads in tutorials.
+
+## Build system, external dependencies
+
+### auto
+
+- Namespace update.
+
+## Chore
+
+- Update ignores.
+
+- Update gitignore.
+
+### deps
+
+- Add base64enc and remove downloadthis dependency.
+
+- Project file updated (automatically).
+
+## Documentation
+
+- Add documentation for create_download_button function.
+
+- Update ENVX1002 tutorials for weeks 7-11.
+
+## Refactoring
+
+- Update tutorial 9 to use create_download_button function.
+
+### list_tutorials
+
+- Remove interactive prompts and add direct tutorial access.
+
+  - Add optional tutorial parameter for direct access
+  - Remove interactive y/n prompts
+  - Add input validation for tutorial numbers
+  - Return tutorial data frame invisibly
+  - Update documentation with examples
+
+## data
+
+- Add beetle dataset for week 8 tutorial.
+
+## tutorials
+
+- Add week 1 tutorial.
+
+## Uncategorized
+
+- Merge branch 'fix_download'.
+
+- Merge remote-tracking branch 'origin/main'.
+
+
 # envx 0.0.0.9008 (2025-02-20)
 
 ## Refactoring
