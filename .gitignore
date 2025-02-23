@@ -13,3 +13,6 @@ README.html
 *_files/
 inst/**/*.html
 
+# Memory Bank and CLI files
+memory-bank/
+.cline*
