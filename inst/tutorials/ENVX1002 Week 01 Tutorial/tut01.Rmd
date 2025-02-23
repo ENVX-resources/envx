@@ -28,11 +28,11 @@ library(learnr)
 
 ## Introduction
 
-Welcome to ENVX1002 tutorials. These tutorials are designed to complement your weekly computer lab sessions by providing practice exercises that introduce key concepts and techniques covered in the labs. 
+Welcome to ENVX1002 tutorials. These tutorials are designed to complement your weekly computer laboratory sessions by providing practice exercises that introduce key concepts and techniques covered in the labs. 
 
-Each tutorial aligns with the current week's lab material so you can work through examples with your lecturer.
+Each tutorial aligns with the current week's laboratory material so you can work through examples with your lecturer.
 
-**Tutorials are designed (mostly) as "live coding" sessions.** Your lecturer will guide you through a couple of exercises for you to follow along. Then, when you attend your lab, you will work through similar exercises with your demonstrators.
+**Tutorials are designed (mostly) as "live coding" sessions.** Your lecturer will guide you through a couple of exercises for you to follow along. Then, when you attend your laboratory, you will work through similar exercises with your demonstrators.
 
 ### This tutorial is a `learnr` tutorial
 
@@ -112,10 +112,10 @@ Additionally, we will explore how to save your work and collaborate with others 
 Posit Cloud was designed to be identical (well, almost) to RStudio Desktop. However, there are some limitations:
 
 - You **must** have an internet connection
-- Some advanced features are not available (but we don't use them in this unit anyway)
-- There are complications surrounding file management -- you can't access your local files directly unlike RStudio Desktop
+- Some advanced features are not available (but we do not use them in this unit anyway)
+- There are complications surrounding file management -- you cannot access your local files directly unlike RStudio Desktop
 
-If you really want to use Posit Cloud and need more help, please approach us in the labs and we will help you.
+If you really want to use Posit Cloud and need more help, please approach us in the laboratories and we will help you.
 
 
 ### Links
@@ -146,10 +146,73 @@ RStudio projects help you organise your work by keeping all files for a project 
 
 We will create an example project together in class.
 
-## Extra time
+## Getting Started with R
 
-If there is extra time, we will demonstrate some useful tips.
+Let's spend a few minutes getting familiar with basic R operations. We'll work through these examples together:
+
+### Basic Calculations
+
+Try these simple calculations in the R console:
+
+```{r eval=FALSE}
+# Addition
+2 + 2
+
+# Multiplication
+3 * 4
+
+# Division with decimals
+10 / 3
+```
+
+### Variables
+
+We can store values in variables:
+
+```{r eval=FALSE}
+# Store a number
+x <- 5
+y <- 10
+
+# Use the variables
+x + y
+
+# Create a text variable
+name <- "ENVX1002"
+```
+
+### Simple Functions
+
+R has many built-in functions. Let's try some:
+
+```{r eval=FALSE}
+# Find the square root
+sqrt(16)
+
+# Round a number
+round(3.14159, digits = 2)
+
+# Get help about a function
+?sqrt
+```
+
+### Creating a Vector
+
+Vectors are basic data structures in R:
+
+```{r eval=FALSE}
+# Create a numeric vector
+numbers <- c(1, 2, 3, 4, 5)
+
+# Calculate the mean
+mean(numbers)
+
+# Calculate the sum
+sum(numbers)
+```
+
+Try these examples yourself as we go through them together. Remember, you can always get help by using `?` before a function name.
 
 ## Thanks
 
-You have reached the end of this tutorial. We hope that this tutorial has helped you set up your RStudio environment. If you have any questions, jump onto Ed discussion board and ask away. See you next week!
+You have reached the end of this tutorial. We hope that this tutorial has helped you set up your RStudio environment and given you a taste of basic R operations. If you have any questions, jump onto Ed discussion board and ask away. See you next week!
