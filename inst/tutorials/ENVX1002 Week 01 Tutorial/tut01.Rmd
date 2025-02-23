@@ -192,6 +192,9 @@ sqrt(16)
 # Round a number
 round(3.14159, digits = 2)
 
+# Subset a variable from a data frame
+iris$Petal.Length
+
 # Get help about a function
 ?sqrt
 ```
