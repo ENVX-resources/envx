@@ -4,3 +4,6 @@
 playground.R
 ^README\.Rmd$
 ^CONTRIBUTING\.Rmd$
+^memory-bank/
+^\.roomodes$
+^\.clinerules.*
