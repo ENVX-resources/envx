@@ -1,5 +1,5 @@
 ---
-title: Simple Linear Regression
+title: Simple linear regression
 author: 
   - Si Yang Han
   - ----
@@ -22,6 +22,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
+library(ggplot2)
 knitr::opts_chunk$set(
 	cache = TRUE,
 	output = FALSE
@@ -63,7 +64,7 @@ I was interested in the differences between power plants based on the primary fu
 
 First -- I will reformat the data to make it easier to work with. Most of the work as a data analyst is data cleaning (e.g. compiling different datasets, removing NA values or unusual outliers, restructing the dataframe). This combines all the annual generated energy (`generation_gwh_XXXX`) columns into one, with a new column called `Year`.
 
-```{r, exercise = TRUE}
+```{r}
 library(readxl)
 dat = read_xlsx("ENVX1002_tut10.xlsx") # there is only one sheet in the Excel file
 
@@ -74,7 +75,7 @@ dat <- dat |>
                       values_to = "generation_gwh")
 ```
 
-### 
+### {.tabset}
 
 Exploring the data from around the world:
 
@@ -82,14 +83,16 @@ Exploring the data from around the world:
 - How does power plant capacity differ between primary fuels? Which tend to have the highest capacity? **Nuclear**
 - How does power generation differ between primary fuels? Which tend to generate the most power per year? **Nuclear**
 
-```{r}
+#### Base R
+
+```{r baseR}
 # barplot of primary fuel observations
 dat$primary_fuel |> table() |> # count the number of rows for each type of primary fuel
   barplot(las = 2, xlab = "Primary Fuel", ylab = "Frequency") # plot in a barplot, `las = 2` rotates the x-axis labels
 
 # boxplot capacity vs primary fuels
 boxplot(dat$capacity_mw ~ dat$primary_fuel, 
-        las = 2, ylim = c(0,5000), # set the y-axis limits so plot doesn't have to display very high values
+        las = 2, ylim = c(0,5000), # set the y-axis limits so plot isn't squished by outliers
         xlab = "Primary Fuel", ylab = "Capacity (MW)")
 
 # boxplot generation vs primary fuels
@@ -97,6 +100,32 @@ boxplot(dat$generation_gwh ~ dat$primary_fuel,
         las = 2, ylim = c(0,40000),
         xlab = "Primary Fuel", ylab = "Generation (GWh)")
 ```
+
+#### ggplot2
+
+```{r ggplot2}
+# barplot
+ggplot(dat, aes(x = primary_fuel)) +
+  geom_bar() +
+  labs(x = "Primary Fuel", y = "Frequency", title = "Primary Fuel Observations") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# boxplot capacity
+ggplot(dat, aes(x = primary_fuel, y = capacity_mw)) +
+  geom_boxplot() +
+  coord_cartesian(ylim = c(0, 5000)) +  # Set y-axis limits
+  labs(x = "Primary Fuel", y = "Capacity (MW)", title = "Capacity by Primary Fuel") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# boxplot generation
+ggplot(dat, aes(x = primary_fuel, y = generation_gwh)) +
+  geom_boxplot() +
+  coord_cartesian(ylim = c(0, 40000)) +  # Set y-axis limits
+  labs(x = "Primary Fuel", y = "Generation (GWh)", title = "Generation by Primary Fuel") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+```
+
 
 ### 
 
@@ -191,7 +220,7 @@ ggplot(aus_dat, aes(x = capacity_mw, y = generation_gwh, color = as.factor(prima
 
 ### Our scientific question
 
-Pick a country and fuel type - is there a linear relationship between power plant capacity and generated power?
+Subset some data (any country, any fuel type) -- is there a linear relationship between power plant capacity and generated power?
 
 </div>
 

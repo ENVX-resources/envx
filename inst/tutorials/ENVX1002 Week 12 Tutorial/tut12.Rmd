@@ -1,5 +1,5 @@
 ---
-title: "ENVX1002 Tutorial week 12"
+title: "Nonlinear models"
 author: 
   - Liana Pozza
   - ----
@@ -31,13 +31,15 @@ knitr::opts_chunk$set(
 
 ## What we will cover in this tutorial
 
-In this week's tutorial we will be doing an exploration to determine the most suitable model for our data. In our exploration We will draw upon the non-linear models covered in the week 12 lectures and how to fit them. 
+In this week's tutorial we will explore how to logically find the most suitable model for our data. We will draw upon linear and non-linear models covered in Module 3.
 
 ### The problem
 
 I would like to find a suitable model to fit relationship between the number of Anthrax cases in domestic animals in Europe changed over time from 2005-2017.
 
-Anthrax is a disease caused by the bacteria known as *Bacillus anthracis*, which is naturally occurring in soil and can remain there for a substantial amount of time (CDC, 2022). Grazing animals may ingest the spores and become infected, with the disease eventually killing the host (Sweeney et al. 2011). Humans can become infected if they make contact with infected animals or animal products. It is an issue of concern both for animal welfare and human health, so it is worth looking at.
+Anthrax is a disease caused by the bacteria known as *Bacillus anthracis*, which is naturally occurring in soil and can remain there for a substantial amount of time (CDC, 2022). Grazing animals may ingest the spores and become infected, with the disease eventually killing the host (Sweeney et al. 2011). Humans can become infected if they make contact with infected animals or animal products. 
+
+The [mortality rate](https://www.betterhealth.vic.gov.au/health/conditionsandtreatments/anthrax) for anthrax is ~20% from a cut, ~60% if ingested and ~80% if inhaled. It is an issue of concern both for animal welfare and human health, so it is worth looking at.
 
 ### The data
 

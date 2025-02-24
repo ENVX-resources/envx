@@ -267,17 +267,15 @@ You should see only the two columns we are interested in.
 
 4. Run some quick exploratory analysis using the `summary()` function. 
 
-```{r summary}
+```{r summary, exercise = TRUE}
 
-summary(dat)
 
 ```
 
-5. Run a correlation analysis between the two variables using the `cor()` function. 
+5. Run a correlation analysis between the two variables using the `cor()` function and create a scatterplot with `plot()` or `ggplot()`.
 
-```{r cor}
+```{r cor, exercise = TRUE}
 
-cor(dat)
 
 ```
 
@@ -303,8 +301,7 @@ You can also overlay the linear model onto a scatterplot of your points.
 library(ggplot2)
 ggplot(dat, aes(x=x_capacity_mw, y=y_generation_gwh_2019)) +
   geom_point() +
-  # use the mod object to overlay the linear model
-  geom_line(aes(y=mod$fitted.values), color="red") +
+  geom_line(aes(y=predict(mod)), color="red") +
   theme_minimal()
 ```
 

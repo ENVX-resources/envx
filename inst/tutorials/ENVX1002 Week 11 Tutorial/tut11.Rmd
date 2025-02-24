@@ -1,5 +1,5 @@
 ---
-title: "ENVX1002 Tutorial week 11"
+title: "Multiple linear regression"
 author: 
   - Liana Pozza
   - ----
@@ -231,6 +231,7 @@ We will read through the output top-down.
 - Model fit statistics (residual standard error, adjusted R^2^, F-statistic)
 
 ```{r}
+mod <- lm(ESP ~ ., data=sub)
 summary(mod)
 ```
 
