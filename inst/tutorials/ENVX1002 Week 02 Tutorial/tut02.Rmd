@@ -1,0 +1,249 @@
+---
+title:  Tutorial 02 Importing data and using functions
+author: 
+  - Januar Harianto
+  - ---
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output: 
+  learnr::tutorial:
+    theme: cosmo
+    language: 
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: "This tutorial will guide you through importing data into R and using functions to manipulate data."
+---
+
+```{r setup, include=FALSE, eval=TRUE}
+library(learnr)
+pacman::p_load(tidyverse, readr, readxl)
+smith_data <- read_excel("data/AgentSmith.xlsx")
+```
+
+## Introduction
+
+Welcome to ENVX1002 tutorials. These tutorials are designed to complement your weekly computer laboratory sessions by providing practice exercises that introduce key concepts and techniques covered in the labs. 
+
+Each tutorial aligns with the current week's laboratory material so you can work through examples with your lecturer.
+
+### This tutorial is a `learnr` tutorial
+
+`learnr` is an *interactive* tutorial system that breaks down complex topics into manageable steps, helping you learn at your own pace. You can revisit sections as needed -- hopefully that helps you study better. For more information, see the `learnr` [website](https://rstudio.github.io/learnr/).
+
+
+### Tutorial objectives
+
+In this tutorial we will look at:
+
+- The concept of a file path
+- Importing data from a file
+- Using functions to manipulate data
+- Finding help on functions
+
+
+## File paths
+
+The "path" to a file is text that specifies the location of a file on your computer. When you open a file like a Word document, you're clicking through folders to reach that file. Programming languages (like R) can't use the mouse like you do, and so need instructions to find files. These instructions are the so-called "paths".
+
+### What a path looks like
+
+A path is like an address for your computer files. On Windows computers, it looks something like this: `"C:\Users\username\Documents\myfile.csv"`. On Mac computers and other Unix-based systems, it looks slightly different: `"/Users/username/Documents/myfile.csv"`. **Note how the slashes are different!**
+
+Think of a file path as directions to your house: it tells the computer exactly which folders to go through to find your file. Each part separated by a slash (`/`) is a folder, with the last part being the actual file name. For example, if you saved a dataset called "temperature.csv" in your Documents folder, the path might be:
+
+- Windows: `"C:\Users\username\Documents\temperature.csv"`
+- Mac: `"/Users/username/Documents/temperature.csv"`
+
+If you were to follow the "instructions" of the path in Windows, for example, you would start at the root folder (`C:\`), double-click on the `Users` folder, then the `username` folder, then the `Documents` folder, and finally you would find the `temperature.csv` file.
+
+### Paths are a nightmare
+
+Paths can be tricky to work with, especially when you're not sure where your files are stored. Fortunately, RStudio provides a solution with its "working directory" feature - the default folder where R looks for files.
+
+The working directory simplifies things. When properly set, you can use a simple path like `"myfile.csv"` instead of the full path `"C:/Users/username/Documents/myfile.csv"`. This works because R knows to look in the working directory (e.g., `"C:/Users/username/Documents"`) for your files. Setting this working directory correctly is important - and RStudio has tools to help with that.
+
+### RStudio Projects
+
+RStudio Projects solve the path problem beautifully! When you create a project, R automatically sets the working directory to that project folder. This means you can use simple, relative paths instead of long, complicated ones.
+
+For example, if you have a project called "ENVX1002" with a "data" folder inside it:
+
+- Instead of writing: `C:\Users\username\Documents\ENVX1002\data\temperature.csv`
+- You can just write: `data/temperature.csv`
+
+Much simpler, right? Projects also make your work more portable - you can move your project folder to another location or computer, and as long as the files inside maintain their relative positions, your code will still work!
+
+This is why we recommend the use of RStudio Projects throughout this Unit -- to keep our work organised and make file paths easier to handle.
+
+### But... how does R know where to look?
+
+The secret lies in the `.Rproj` file that RStudio creates when you make a project. This file is nothing complicated -- it is just a *text file* that tells R where the project folder is. When you open a project, RStudio reads this file and sets the working directory to the project folder. That's it.
+
+Let's learn more about paths by importing some data. We will do this in the next tutorial section.
+
+## Importing data
+
+At some point you will need to analyse your own data, and that means importing it into R. There are many ways to do this, but the most common is to read a file from your computer.
+
+### Create an RStudio project
+
+Create an appropriate RStudio project for this tutorial (or use an existing one). 
+
+### Download some data
+
+We have provided two datasets for you to download. Click on the links below to download them:
+
+The first dataset is called `Neo.csv`, a comma-separated values (CSV) file. This is a common, open format for data files:
+```{r message=FALSE, echo=FALSE}
+envx::create_download_button(
+  "data/Neo.csv",
+  button_label = "Download Neo.csv"
+)
+```
+
+<br>
+The second dataset is called `AgentSmith.xlsx. The file extension is typical of an MS Excel file:
+
+```{r message=FALSE, echo=FALSE}
+envx::create_download_button(
+  "data/AgentSmith.xlsx",
+  button_label = "Download AgentSmith.xlsx"
+)
+```
+
+<br>
+Put both files into your current working directory. Do not put in a `"data"` folder for now.
+
+### Reading data
+
+We'll start by reading an Excel file, which requires an additional package that isn't included in base R. This introduces the concept of installing packages to extend R's functionality.
+
+### Reading Excel files with `readxl`
+
+R doesn't include built-in support for Excel files due to licensing restrictions around proprietary formats. However, we can easily add this capability using the `readxl` package:
+
+```{r}
+#| eval: false
+# Only run this in the console, not in a code chunk
+install.packages("readxl")
+```
+
+Once installed, you need to load the package to use its functions:
+
+```{r}
+#| eval: false
+library(readxl)
+read_excel("AgentSmith.xlsx")
+```
+
+This will read the Excel file and display its contents. If you want to save the data, then it needs to be "assigned" to a variable or object. This can be done using the `<-` operator:
+
+```{r}
+#| eval: false
+smith_data <- read_excel("AgentSmith.xlsx")
+```
+
+Then you can use the `smith_data` object in your code. For example, simply typing `smith_data` will display the data:
+
+```{r}
+smith_data
+```
+
+### Move the data
+
+Now we will move AgentSmith.xlsx into a `"data"` folder. The path to the file has changed, so we need to update the code to reflect this. The new path is `"data/AgentSmith.xlsx"`. In practice you would edit the existing code to reflect this change (so that it works with the new path).
+
+```{r}
+#| eval: false
+smith_data <- read_excel("data/AgentSmith.xlsx")
+```
+
+Are you getting it? Good! Now let's do one more change. We will rename the `"data"` folder to `"matrix"`. The path has changed again -- how would you update the code to reflect this change?
+
+### Neo's data
+
+This time, do the same for the `Neo.csv` file, but you have to use a different tool/function called `read_csv()` from the `readr` package. How would you do this? You will need to:
+
+1. Install the `readr` package
+2. Load the `readr` package
+3. Read the `Neo.csv` file
+4. Assign the data to a variable
+5. Display the data
+6. Move the file around, updating the path as needed. You can put it in a `"chosen"` folder, perhaps.
+
+## A quick guide to functions
+
+Functions are the building blocks of R. They are like little machines that take in some input, do something with it, and then give you an output. Functions are everywhere in R, and you will use them all the time.
+
+With functions you are essentially telling R to "do something". For example, when you use `read_excel("AgentSmith.xlsx")`, you are telling R to "read the Excel file called `AgentSmith.xlsx`". Without it, you would have to write a lot more code to do the same thing -- and that's not fun... is it?
+
+### Anatomy of a function
+
+A function has three main parts:
+
+1. The function name: This is the name of the function, like `read_excel`.
+2. The arguments: These are the inputs to the function, like `"AgentSmith.xlsx"`.
+3. The output: This is what the function returns, like the data in the Excel file.
+
+Functions can have many arguments, and some are optional. For example, `read_excel()` has an argument called `sheet` that lets you specify which sheet to read from an Excel file. If you don't provide this argument, `read_excel()` will read the first sheet by default.
+
+### Using functions
+
+To use a function, you simply write the function name followed by parentheses `()`. Inside the parentheses, you provide the arguments. For example, to read the Excel file `AgentSmith.xlsx`, you write `read_excel("AgentSmith.xlsx")`.
+
+### What function is it?
+
+An important part of learning R is knowing what functions are available to you. You are not expected to memorise them all, although some will become second nature with practice. The key is to know where to look for help so that you can find the right function when you need it, even if you don't know it off the top of your head!
+
+You have actually used many functions in the past week. These are all functions:
+
+- `install.packages()`
+- `library()`
+- `read_excel()`
+- `read_csv()`
+
+These functions all have additional arguments that you can use to customise their behaviour -- how do you find out what these are?
+
+### Help!
+
+The `?` operator is your friend. If you want to know more about a function, just type `?` followed by the function name. For example, to learn more about the `read_excel()` function, type `?read_excel`. Try it now.
+
+```{r}
+#| eval: false
+?read_excel
+```
+
+What appears in the Help pane is a description of the function, its arguments, and how to use it. There is so much information that you may not understand it all at first, but it's a good place to start. Lots of technical terms will bombard you, but don't worry -- you will get used to them with time. The most important thing is to know that the Help pane is there to help you!
+
+### Practice
+
+Now that you know how to use functions and where to find help, let's practice. Try the following exercises:
+
+1. Use the `head()` function to display the first few rows of the `smith_data` object. Now, use the `?` operator to learn more about the `head()` function, and then change the number of rows displayed to 10. Can you do it?
+2. Use the `summary()` function to get a summary of the `smith_data` object. What does it tell you?
+3. **Challenge**: you want to know how many rows and columns are in the `smith_data` object. How would you do this? Hint: there are two functions that can help you with this.
+
+Don't hit "Next" until you've tried these exercises. 
+
+### Solutions
+
+Here are the solutions to the exercises:
+
+1. To display the first 10 rows of `smith_data`, use `head(smith_data, 10)`. The `head()` function displays the first few rows of a dataset, and the second argument specifies how many rows to display. To learn more about `head()`, type `?head` in the console.
+
+2. The `summary()` function on `smith_data` gives you a summary of the data. It tells you the number of observations (rows) and variables (columns), as well as some summary statistics for each variable. 
+
+3. To find the number of rows and columns in `smith_data`, one way is to use the `nrow()` and `ncol()` functions, respectively. For example, `nrow(smith_data)` will give you the number of rows in the dataset. Alternatively, the str() function will give you a lot of information about the dataset, including the number of rows and columns. **How would you know these functions exist?** Well, do a search online using "r" as a keyword: "r function to get number of rows in a dataset". You will likely find the answer on a site like Stack Overflow or the R documentation.
+
+## Thanks!
+That's it for today's tutorial. There is no spoon.
+
+![Photo by <a href="https://unsplash.com/@photoskunk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Shannon Kunkle</a> on <a href="https://unsplash.com/photos/a-close-up-of-a-figurine-of-a-man-wearing-sunglasses-eQwkTnp_5fk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>](images/stop-bullet-time.jpg){width=250px}
+

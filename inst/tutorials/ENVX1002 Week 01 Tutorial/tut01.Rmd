@@ -1,5 +1,5 @@
 ---
-title:  Tutorial 01
+title:  Tutorial 01 Getting started - R, RStudio and projects
 author: 
   - Januar Harianto
   - ---
