@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9010 (2025-03-04)
+
+## Features
+
+- Update tutorials 1 and 2.
+
+## Chore
+
+- Update gitignore.
+
+
 # envx 0.0.0.9009 (2025-02-24)
 
 ## Features
