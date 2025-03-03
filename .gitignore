@@ -16,3 +16,5 @@ inst/**/*.html
 # Memory Bank and CLI files
 memory-bank/
 .cline*
+
+_extra/
