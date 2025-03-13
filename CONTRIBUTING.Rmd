@@ -17,6 +17,70 @@ knitr::opts_chunk$set(
 
 Contributions are currently limited to the development team due to the development stage of the package. However, we welcome feedback and suggestions for improvements -- click on the "Issues" tab above to submit your feedback.
 
+## Version Control Standards
+
+### Version Numbering
+We follow semantic versioning with a development suffix:
+- Format: `<major>.<minor>.<patch>` for releases (e.g., 1.0.0)
+- Format: `<major>.<minor>.<patch>.<development>` for development versions (e.g., 1.0.0.9000)
+
+#### Version Components
+- **major**: Breaking changes or significant milestones
+- **minor**: New features (backward compatible)
+- **patch**: Bug fixes only
+- **development**: Numbers 9000+ for in-development versions
+
+#### When to Increment
+- Patch (e.g., 1.0.1): Bug fixes only
+- Minor (e.g., 1.1.0): New features, backward compatible changes
+- Major (e.g., 2.0.0): Breaking changes or API stability milestones
+- Development (e.g., *.9001): Only when adding features that need detection
+
+### Commit Standards
+We use conventional commits to make the changelog maintainable:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+#### Types
+- `feat`: (minor) New feature
+- `fix`: (patch) Bug fix
+- `docs`: Documentation only
+- `style`: Code style/formatting
+- `refactor`: Code changes that neither fix bugs nor add features
+- `test`: Adding/updating tests
+- `chore`: Maintenance tasks
+- `build`: Changes affecting build system
+- `ci`: CI configuration changes
+
+#### Breaking Changes
+Add `!` after type/scope and describe in footer:
+
+```
+feat!: remove deprecated API
+BREAKING CHANGE: 'xyz' API has been removed
+```
+
+## Development Workflow
+
+1. Update the version in DESCRIPTION:
+   - For development: Add .9000 to current version
+   - For release: Remove development suffix and increment according to changes
+
+2. Make changes following conventional commits
+
+3. Document changes in NEWS.md under the appropriate version heading
+
+4. Before release:
+   - Run tests: `devtools::test()`
+   - Check package: `devtools::check()`
+   - Update documentation: `devtools::document()`
+
 ## Adding new tutorials to `envx` package
 
 1. Create a new tutorial using the `learnr` package. You should already know how to do this.
@@ -41,4 +105,3 @@ devtools::install()
 
 ```r
 remotes::install_github("ENVX-resources/envx")
-```
