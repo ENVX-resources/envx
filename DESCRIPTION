@@ -19,6 +19,7 @@ Imports:
     car,
     dplyr,
     ggplot2,
+    httr2,
     learnr,
     lifecycle,
     patchwork,
