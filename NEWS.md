@@ -1,5 +1,28 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9011 (2025-03-15)
+
+## Features
+
+- Add check_version function for update notifications.
+
+  Function compares local package version with GitHub repository version to inform users about available updates.
+
+## Chore
+
+- Update gitignore.
+
+## Documentation
+
+- Add version control and commit standards to contributing guide.
+
+## Uncategorized
+
+- Merge branch 'organise-tutorials'.
+
+- Merge branch 'SY'.
+
+
 # envx 0.0.0.9010 (2025-03-04)
 
 ## Features
