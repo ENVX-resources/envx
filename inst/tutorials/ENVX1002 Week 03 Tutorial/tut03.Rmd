@@ -488,6 +488,13 @@ Render your document. Then do the following steps to audit it before submission 
 Don't just copy and paste the stuff below, but for your reference, here is what your final document might look like:
 
 
+```{r message=FALSE, echo=FALSE}
+envx::create_download_button(
+  "data/penguins.qmd",
+  button_label = "Download penguins.qmd"
+)
+```
+
 
 ## Thanks!
 
