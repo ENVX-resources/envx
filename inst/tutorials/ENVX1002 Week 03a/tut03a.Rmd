@@ -1,0 +1,494 @@
+---
+title: "Week 03a: Creating scientific reports with Quarto"
+author:
+  - Januar Harianto
+  - ---
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output:
+  learnr::tutorial:
+    theme: cosmo
+    language:
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: "Learn how to create professional scientific reports using Quarto, with hands-on practice analysing and visualising penguin morphological data"
+---
+
+```{r setup, include=FALSE, eval=TRUE}
+# Load required packages
+library(learnr)
+library(tidyverse)  # for read_csv() and data manipulation
+tutorial_options(exercise.timelimit = 60)
+
+# Load and prepare data
+penguins <- read_csv("data/penguins.csv")
+
+# Check for common issues
+if (!exists("penguins")) {
+  stop("Could not load penguins data. Check file path.")
+}
+if (nrow(penguins) == 0) {
+  stop("Penguins data loaded but contains no rows.")
+}
+```
+
+## Introduction
+
+Welcome to ENVX1002 tutorials. These tutorials are designed to complement your weekly computer laboratory sessions by providing practice exercises that introduce key concepts and techniques covered in the labs. 
+
+Each tutorial aligns with the current week's laboratory material so you can work through examples with your lecturer.
+
+### This tutorial is a `learnr` tutorial
+
+`learnr` is an *interactive* tutorial system that breaks down complex topics into manageable steps, helping you learn at your own pace. You can revisit sections as needed -- hopefully that helps you study better. For more information, see the `learnr` [website](https://rstudio.github.io/learnr/).
+
+### Tutorial objectives
+
+In this tutorial you will:
+
+- Import data and present it in a clear format
+- Control the appearance of your code and output
+- Apply proper formatting and styling with both markup and inline R code
+- Customise captions and references in your document
+
+To do this we will work on a relatively popular dataset in the data science community, the [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/) dataset, which contains measurements of penguins collected from three species on islands in the Palmer Archipelago, Antarctica.
+
+Once you have completed this tutorial, you should be better prepared for Project 1 where you will be required to write a scientific report using Quarto.
+
+## Quarto refresher
+
+Based on feedback we seem to have a good number of students who are still confused about what Quarto is, what it does and why it is useful. Let's go over it again...
+
+### What is Quarto?
+
+Quarto is a powerful publishing system designed specifically for creating professional scientific and technical documents. Think of it as a modern tool that combines your analysis, visualisations, and written content into a single, reproducible document.
+
+It is powerful but as a user, you only need to know how to write your thoughts and code in a single document. **RStudio takes care of the rest when you render your document.**
+
+### Why use Quarto for scientific writing?
+
+In traditional scientific writing, you might (in some kind of order):
+
+1. Run analyses in R/Excel/some other tool
+2. Copy your results into Excel
+3. Create/edit graphs in another program (e.g. Phtotoshop) because Excel has a limited set of options
+4. Manually paste everything into Word, and check formatting
+5. Repeat the entire process again if your data changes just one bit
+
+This process is time-consuming and prone to errors. 
+
+Quarto addresses these challenges by allowing you to **write text and code in one place**, ensuring reproducibility of your analysis. It helps you generate professional-quality documents and can export to multiple formats including PDF, Word, and HTML, all from the same source file.
+
+### How Quarto works
+
+Quarto documents (`.qmd` files) combine three main elements:
+
+1. **Text content**: Using Markdown, you focus on the content and not the formatting details. 
+2. **Code**: You can include R (or other programming languages that we don't cover in this Unit) to streamline the process of importing, analysing and presenting data in your document. **If data changes, your results update automatically.** 
+3. **YAML header**: This is where you set the document's title, author, and output format, including formatting options like font size and line spacing.
+
+In Lab 01, you learned the basics of Quarto. Now, we'll build on those skills to create professional scientific reports that:
+
+- Following scientific writing conventions
+- Include data analysis to support your findings
+- Create publication-quality visualisations to communicate your results
+- Make your work reproducible so others can verify and build upon it
+
+### The rendering process
+When you create a Quarto document, you're working with a text file that contains special syntax. The magic happens during rendering:
+
+1. Quarto reads your `.qmd` file
+2. Executes any R code it finds
+3. Combines the results with your text
+4. Formats everything according to your specifications
+5. Creates a polished output document
+
+Think of it like a recipe: your `.qmd` file contains the ingredients and instructions, and the rendering process "cooks" it into your final document.
+
+This approach ensures that your analysis and writing are all coming from a single source of truth, making it easier to update and share your work.
+
+### Check your understanding
+
+
+```{r quarto-quiz, echo=FALSE}
+quiz(
+  caption = "Understanding Quarto",
+  
+  question("What are the three main elements of a Quarto document?",
+    answer("Text content, Code, and YAML header", correct = TRUE, 
+           message = "Correct! These three elements work together to create your final document."),
+    answer("Introduction, Methods, and Results", 
+           message = "While these are important parts of a scientific paper, they aren't the main elements of a Quarto document's structure."),
+    answer("R, Python, and Julia", 
+           message = "These are programming languages that can be used with Quarto, but they aren't the main elements of a Quarto document."),
+    answer("PDF, Word, and HTML", 
+           message = "These are output formats that Quarto can produce, not the main elements of a Quarto document."),
+    allow_retry = TRUE
+  ),
+  
+  question("Why is Quarto particularly useful for scientific writing? Select all that apply.",
+    answer("It combines analysis code and writing in one document", correct = TRUE),
+    answer("Results update automatically when data changes", correct = TRUE),
+    answer("It ensures reproducibility of analysis", correct = TRUE),
+    answer("It automatically collects data from experiments", 
+           message = "Quarto helps with analysis and writing, but doesn't collect experimental data."),
+    type = "multiple",
+    allow_retry = TRUE
+  ),
+  
+  question("What happens during the rendering process?",
+    answer("Quarto executes the code and combines results with text to create the final document", 
+           correct = TRUE, 
+           message = "Yes! This is why Quarto is so powerful for reproducible research."),
+    answer("Quarto just formats the text to look nice", 
+           message = "Quarto does more than just formatting - it also executes code and combines results."),
+    answer("Quarto collects data from your experiments", 
+           message = "Data collection happens outside of Quarto - it works with data you already have."),
+    answer("Quarto automatically writes your analysis", 
+           message = "While Quarto helps with analysis, you still need to write the code and interpretation."),
+    allow_retry = TRUE
+  )
+)
+```
+
+### Practice: Identifying Quarto components
+
+Can you identify which component of Quarto (Text, Code, or YAML) each of these elements belongs to? Click "Continue" when you're ready to check your answers.
+
+```{r component-quiz, echo=FALSE}
+quiz(
+  caption = "Quarto Components",
+  
+  question("Where does this belong? \n```{r}\nggplot(data) +\n  geom_point()\n```",
+    answer("Code", correct = TRUE),
+    answer("Text"),
+    answer("YAML header"),
+    allow_retry = TRUE
+  ),
+  
+  question("Where does this belong? \n```Chimpanzees are significantly smellier than flowers (p < 0.001).```",
+    answer("Text", correct = TRUE),
+    answer("Code"),
+    answer("YAML header"),
+    allow_retry = TRUE
+  ),
+  
+  question("Where does this belong? \n```{r}\ntitle: \"My Analysis\"\nformat: html```",
+    answer("YAML header", correct = TRUE),
+    answer("Text"),
+    answer("Code"),
+    allow_retry = TRUE
+  )
+)
+```
+
+## Your first Quarto document
+
+To create a scientific report with Quarto in RStudio:
+
+1. Create a new RStudio Project: File → New Project → New Directory → New Project
+2. Create a new Quarto document: File → New File → Quarto Document...
+
+**Important note. "Use visual markdown editor" is not recommended but we understand if you prefer to use it. GitHub Copilot does not work in Visual mode.**
+
+Anyway, you should know how to fill in the details, but leave most as default if you are unsure. Your final document is a simple text file with a .qmd extension and it should be visible in RStudio as an opened tab.
+
+### Switch to Source mode (if necessary)
+
+You can toggle between Source and Visual mode by clicking the "Source" button in the top right corner of the editor. Source mode shows the raw text of your document, while Visual mode shows a preview of the formatted document.
+
+**A lot of the details in this tutorial will be easier to follow in Source mode, so we recommend using it for now.**
+
+### Understanding the document structure
+
+Your new Quarto document will have this basic structure:
+```yaml
+---
+title: "Your title here"
+author: "Your Name"
+format: html
+---
+
+[... and your content goes here...]
+
+```
+
+This YAML header (between the `---` marks) controls the document settings. We will get to that soon.
+
+### Render
+
+**Render your document now.** This step ensures that you have the minimum requirements and will save a lot of time later. RStudio will prompt you to save your file if you haven't already.
+
+Rendering your document is the process of converting your `.qmd` file into a polished document. You can render your document by clicking the "Render" button in RStudio, or by using the keyboard shortcut: Cmd/Ctrl + Shift + K.
+
+When you click "Render", you should see:
+
+- A preview of your document in the Viewer pane (or a new pop-up web browser window)
+- **A new HTML file created in your project directory** with the same name as your `.qmd` file, but with an `.html` extension
+
+For example, if your document is named `penguins-report.qmd`, you'll see `penguins-report.html` appear in your project folder.
+
+### The `.html. file is what you will submit, not the `.qmd` file
+
+Importantly you need to know that in the end, you're using a `.qmd` file to create a final product to publish. Here it's an HTML file, but you can also render to PDF, Word, or other formats. We'll stick to HTML for now.
+
+## Important Quarto YAML settings
+
+The YAML header at the top of your Quarto document controls the document settings. We call this the **front matter**. Here are some key settings you should know:
+
+- `title`: The title of your document
+- `author`: Your name
+- `format`: The output format of your document (e.g., `html`, `pdf`, `word`)
+- `theme`: The appearance of your document (e.g., `cosmo`, `flatly`, `journal`)
+- `toc`: Whether to include a table of contents in your document
+- `highlight`: The syntax highlighting style for code blocks
+- `code_folding`: Whether to include code folding in your document
+- `embed_resources`: Whether to embed resources (e.g., images and styling) in your document
+
+In the end you will have a document that perhaps, looks like this:
+
+```markdown
+---
+title: "My First Quarto Document"
+author: "Your Name"
+format: html
+theme: cosmo
+toc: true
+highlight: github
+code_folding: true
+embed_resources: true
+---
+
+[... and your content goes here...]
+```
+
+More information about these settings can be found in the [Quarto documentation](https://quarto.org/docs/authoring/front-matter.html).
+
+### Text and code
+
+This is where things may start to become a bit tricky. Let's break down how markdown and R code interact in a Quarto document:
+
+### Writing text with Markdown
+
+Text in Quarto is written using Markdown, which is a lightweight formatting language. Here are some key Markdown formatting options that are likely to be enough for your report:
+
+- **Bold text**: Use double asterisks like `**bold**`
+- *Italic text*: Use single asterisks like `*italic*`
+- Headers: Use hash symbols (`#`, `##`, `###`) for different heading levels
+- Lists: Use hyphens (`-`) or numbers (`1.`) followed by a space
+- [Links](https://quarto.org): Use `[link text](URL)`
+
+Of course you need to follow certain rules, so reading the [Markdown guide](https://quarto.org/docs/authoring/markdown-basics.html) is a good idea.
+
+### Including R code in code chunks
+
+R code is included in special code chunks surrounded by triple backticks and `{r}`:
+
+<pre><code>```{r}
+# This is R code
+1:10
+```</code></pre>
+
+When your document is rendered, R will:
+
+1. Run the code inside the chunk
+2. Capture the output (results, plots, warnings, etc.)
+3. Insert both the code and its output into your document
+
+### Code chunk options
+
+You can control how code and output appear using chunk options. These are applied using `#|` comments a the beginning of the chunk. For example:
+
+<pre><code>```{r}
+#| echo: false
+1:10
+```</code></pre>
+
+In the above, the code will be completely hidden but the plot will be shown. For the code chunk below:
+
+<pre><code>```{r}
+#| code-fold: true
+1:10
+```</code></pre>
+
+The code will be shown but it is "folded" by default, and the plot still shows. Try it!
+
+Common chunk options (you can use a combination to produce a specific effect):
+
+- `echo`: Whether to show the code 
+- `eval`: Whether to run the code 
+- `output`: Whether to show the output
+- `message`/`warning`: Whether to show messages/warnings
+- `code-fold`: Whether to fold the code by default
+### Inline R code
+
+You can also embed small bits of R code directly in your text using backticks with `r` or `{r}`:
+
+<pre><code>I have `{r} 10+1` chocolates.</code></pre>
+
+When rendered, this will replace the code with its result:
+
+> I have 11 chocolates.
+
+This is extremely useful for reporting statistics in your text that will automatically update if your data changes. Inline code is covered in Lab 02, under Reporting your data.
+
+### Mixing text and code
+
+The real power of Quarto is the ability to weave narrative text and analytical code together:
+
+This creates a seamless document where your analysis is directly integrated with your scientific narrative.
+
+
+<pre>The gibbon decided to count its fruit, because it was 
+a very organised gibbon.
+
+<code>```{r}
+#| code-fold: true
+mangoes <- 11
+apples <- 5
+```</code>
+It found that it had `{r} mangoes + apples` pieces of fruit 
+in total, of which `{r} mangoes` were mangoes and `{r} apples` 
+were apples.
+</pre>
+
+
+## Step-by-step: Create a report
+
+Let's create a scientific report about penguins using the Palmer Penguins dataset. We'll go through this step by step, building up our document and seeing how code and text work together.
+
+**This report structure does NOT follow your project 1 structure and is only for practise.**
+
+Make sure to download the penguins.csv file (to the `data` folder if you want to follow this tutorial).
+
+```{r message=FALSE, echo=FALSE}
+envx::create_download_button(
+  "data/penguins.csv",
+  button_label = "Download penguins.csv"
+)
+```
+
+### 1. Set up your document structure
+
+Start with a basic YAML header that includes title, author, and output format:
+
+```yaml
+---
+title: "Palmer Penguins: A Morphological Analysis"
+author: "Your Name"
+format: html
+embed-resources: true
+---
+```
+
+**Importantly, set `embed-resources: true` to ensure that images and other resources are included in the final document. Otherwise it will not render correctly.**
+
+### 2. Add an introduction
+
+Write a brief introduction explaining what your report is about:
+
+```markdown
+## Introduction
+
+This report analyses morphological characteristics of three penguin species collected from the Palmer Archipelago, Antarctica. The data was obtained from the Palmer Penguins dataset available online (Horst and Kalinin, 2020).
+```
+
+### 3. Load and inspect data
+
+Now, add a code chunk to load the necessary libraries and data:
+
+<pre><code>```{r}
+# Load required packages
+library(tidyverse)
+
+# Import the penguins dataset
+penguins <- read_csv("data/penguins.csv")
+
+# Take a quick look at the data
+head(penguins)
+```</code></pre>
+
+```{r include=FALSE}
+# Load required packages
+library(tidyverse)
+
+# Import the penguins dataset
+penguins <- read_csv("data/penguins.csv")
+
+# Take a quick look at the data
+head(penguins)
+```
+
+Then, hide the code chunk and output as you do not need to show it in the final report by adding the following code-folding and output options to the code chunk:
+
+<pre><code>```{r}
+#| code-fold: true
+#| output: false
+# Load required packages
+[...rest of code]
+
+```</code></pre>
+
+Instead, you will be writing out what you see when you read the output of `head(penguins)`.
+
+```markdown
+The dataset contains measurements for penguin species, island, bill dimensions, flipper length, body mass, and sex. There are a total of 8 variables and 344 observations...
+```
+
+### 4. Visualise data
+
+Now add a new secion for data visualisation:
+
+<pre><code>```{r}
+#| code-fold: true
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(
+    x = "Bill Length (mm)",
+    y = "Bill Depth (mm)",
+    color = "Species"
+  )
+```</code>
+Figure 1: Scatter plot of bill length and bill depth by species.
+</pre>
+
+Then write about the plot, making sure to reference it:
+
+```markdown
+There appears to be a clear separation between the three penguin species based on bill length and depth (see Figure 1). Gentoo penguins have the longest bills, while Adelie and Chinstrap penguins show distinct differences in bill dimensions. This suggests that bill morphology is an important feature for species identification.
+```
+
+```{r, include=FALSE}
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(
+    x = "Bill Length (mm)",
+    y = "Bill Depth (mm)",
+    color = "Species"
+  )
+```
+
+### 5. Preview your document
+
+Render your document. Then do the following steps to audit it before submission (to anywhere):
+
+1. Check that the report looks like it did not come out like a mess of code and text. The idea report should not indicate to the reader that it was written in Quarto (code-folding is for marking purposes, so pretend those did not exist).
+2. Go find your output file. This is the file you will submit. Open it in your browser and check that it looks as expected.
+3. Drag the output file somewhere else on your computer, ideally outside of your project. Open it again. If it still looks good, you're ready to submit.
+
+### Final output
+
+Don't just copy and paste the stuff below, but for your reference, here is what your final document might look like:
+
+
+
+## Thanks!
+
+I hope this tutorial helps. If you have questions and suggestions let us know, we want to improve this tutorial for future students. Good luck!

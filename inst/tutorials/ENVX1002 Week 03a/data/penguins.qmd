@@ -1,0 +1,40 @@
+---
+title: "Palmer Penguins: A Morphological Analysis"
+author: "Your Name"
+format: html
+embed-resources: true
+---
+
+## Introduction
+
+This report analyses morphological characteristics of three penguin species collected from the Palmer Archipelago, Antarctica. The data was obtained from the Palmer Penguins dataset available online (Horst and Kalinin, 2020).
+
+```{r}
+#| code-fold: true
+#| output: false
+# Load required packages
+library(tidyverse)
+
+# Import the penguins dataset
+penguins <- read_csv("data/penguins.csv")
+
+# Take a quick look at the data
+head(penguins)
+```
+
+The dataset contains measurements for penguin species, island, bill dimensions, flipper length, body mass, and sex. There are a total of 8 variables and 344 observations...
+
+```{r}
+#| code-fold: true
+ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(
+    x = "Bill Length (mm)",
+    y = "Bill Depth (mm)",
+    color = "Species"
+  )
+```
+Figure 1: Scatter plot of bill length and bill depth by species.
+
+## Bill morphology by species
+There appears to be a clear separation between the three penguin species based on bill length and depth (see Figure 1). Gentoo penguins have the longest bills, while Adelie and Chinstrap penguins show distinct differences in bill dimensions. This suggests that bill morphology is an important feature for species identification.
