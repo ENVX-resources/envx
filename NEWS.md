@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9013 (2025-03-15)
+
+## Bug fixes
+
+- Missing download.
+
+  add penguins.qmd example
+
+
 # envx 0.0.0.9012 (2025-03-15)
 
 ## Bug fixes
