@@ -18,7 +18,7 @@ output:
     progressive: true
     allow_skip: true
 runtime: shiny_prerendered
-description: "This tutorial will guide you through the steps to perform a two-sample t-test using R, including checking assumptions, viewing the data in `ggplot2`, and interpreting the results."
+description: "This tutorial will guide you through the steps to perform non-parametric tests using R, including checking assumptions, viewing the data in `ggplot2`, and interpreting the results."
 ---
 
 ```{r setup, eval=TRUE, include=FALSE}
