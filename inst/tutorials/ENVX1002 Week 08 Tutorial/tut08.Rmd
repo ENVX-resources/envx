@@ -1,7 +1,7 @@
 ---
 title: Non-parametric tests
 author: 
-  - Januar Harianto
+  - Januar Harianto & Floris van Ogtrop
   - ---
   - "**ENVX1002 Introduction to Statistical Methods**"
   - School of Life and Environmental Science
