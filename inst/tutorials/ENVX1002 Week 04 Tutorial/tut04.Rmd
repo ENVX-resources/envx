@@ -1,0 +1,490 @@
+---
+title: "Week 04: Normal distribution and CLT"
+author:
+  - Januar Harianto
+  - ---
+  - "**ENVX1002 Introduction to Statistical Methods**"
+  - School of Life and Environmental Science
+  - The University of Sydney
+  - ---
+output:
+  learnr::tutorial:
+    theme: cosmo
+    language:
+      en:
+        button:
+          nexttopic: Next Page
+          previoustopic: Previous Page
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: "Learn about normal distributions, the Central Limit Theorem, and how to apply these concepts using R for statistical analysis"
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)  # for data manipulation and visualization
+tutorial_options(exercise.timelimit = 60)
+```
+
+## Introduction
+
+Welcome to Week 4 of ENVX1002! This tutorial explores fundamental concepts in statistics: the normal distribution and the Central Limit Theorem (CLT). These concepts are essential for understanding statistical inference and data analysis in environmental science.
+
+### This tutorial is a `learnr` tutorial
+
+`learnr` is an *interactive* tutorial system that breaks down complex topics into manageable steps, helping you learn at your own pace. You can revisit sections as needed -- hopefully that helps you study better. For more information, see the `learnr` [website](https://rstudio.github.io/learnr/).
+
+Because we update our tutorials from time to time, it is beneficial to have the latest version of the `learnr` package. You can check the version of the package you have installed by running the following code in your R console:
+
+### Prerequisites
+
+Before starting this tutorial, you should:
+
+- Have R and RStudio installed
+- Be familiar with basic R syntax
+- Understand descriptive statistics (mean, standard deviation)
+- Know how to create basic visualisations in R using ggplot2
+
+### Tutorial objectives
+
+By the end of this tutorial, you will be able to:
+
+1. Explain the properties of normal distributions
+2. Understand the Central Limit Theorem (CLT)
+3. Use R functions for probability calculations when working with normal distributions
+   - `pnorm()`
+   - `qnorm()`
+   - `dnorm()`
+4. Interpret results from normal distributions and CLT
+
+### Getting started
+
+This tutorial follows a structured approach:
+
+1. First, we'll explore the normal distribution and its properties
+2. Then, we'll discover the Central Limit Theorem
+3. Finally, we'll apply these concepts to real data analysis
+
+For the best learning experience:
+
+- Work through sections in order
+- Run all code examples yourself
+- Take notes on key concepts
+- Ask questions on Ed if anything is unclear
+- Complete all practice exercises
+
+
+
+## Normal Distribution
+
+The normal distribution (also called Gaussian distribution) is one of the most important probability distributions in statistics. It forms the foundation for many statistical methods and is often found in natural phenomena.
+
+> Note: Throughout this tutorial, we'll use R code to generate plots that help visualise statistical concepts. Don't worry about understanding the code used to create these plots - they're included for reproducibility. Focus instead on interpreting the visualisations and understanding the concepts they illustrate.
+
+### What does a normal distribution look like?
+
+Let's start by looking at a standard normal distribution - this is a normal distribution with a mean of 0 and standard deviation of 1. The vertical lines show important intervals that we'll discuss next.
+
+```{r}
+#| echo: false
+#| warning: false
+library(ggplot2)
+
+# Create standard normal distribution plot
+ggplot(data.frame(x = c(-4, 4)), aes(x)) +
+  stat_function(fun = dnorm) +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "blue") +
+  geom_vline(xintercept = c(-2, 2), linetype = "dashed", color = "green") +
+  geom_vline(xintercept = c(-3, 3), linetype = "dashed", color = "red") +
+  labs(
+    title = "Standard Normal Distribution",
+    subtitle = "Showing 1σ (blue), 2σ (green), and 3σ (red) intervals",
+    x = "Standard Deviations from Mean",
+    y = "Density"
+  )
+```
+
+### Key characteristics
+
+The normal distribution is characterised by:
+
+- A symmetric, bell-shaped curve
+- Two defining parameters: mean (μ) and standard deviation (σ)
+- Predictable probability patterns:
+  - Approximately 68% of data falls within ±1σ of the mean
+  - Approximately 95% of data falls within ±2σ of the mean
+  - Approximately 99.7% of data falls within ±3σ of the mean
+
+This predictable pattern is known as the "empirical rule" or the "68-95-99.7 rule".
+
+The normal distribution gives us a powerful tool for calculating exact probabilities. When any variable follows a normal distribution with mean μ and standard deviation σ (written as N(μ, σ²)), we can precisely determine the probability of observing any value or range of values. **This mathematical predictability means that if we have any distribution that is approximately normal, we can fit it to a normal distribution and use the properties of the normal distribution to make inferences about the data.**
+
+### From theory to practice: trees
+
+Now that we understand what a normal distribution looks like in theory, let's work with some real data. We'll use measurements of Black Cherry trees, a dataset that comes built into R:
+
+```{r}
+# Load and examine the dataset
+data(trees)
+str(trees)  # Structure of the data
+```
+
+### 
+
+The dataset contains measurements of 31 Black Cherry trees, including their heights. Let's see if these heights follow a normal distribution:
+
+```{r tree-heights}
+#| warning: false
+# Calculate summary statistics to generate normal curve overlay in plot
+mean_height <- mean(trees$Height)
+sd_height <- sd(trees$Height)
+
+# Create histogram with normal curve overlay
+ggplot(trees, aes(x = Height)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 11,
+                fill = "lightblue", color = "black") +
+  stat_function(fun = dnorm, args = list(mean = mean_height, sd = sd_height),
+                color = "red", linewidth = 1) +
+  labs(title = "Distribution of Black Cherry tree heights",
+       subtitle = paste("Mean =", round(mean_height, 1), "feet,",
+                       "SD =", round(sd_height, 1), "feet"),
+       x = "Height (feet)",
+       y = "Density")
+```
+
+Looking at the plot:
+
+- The bars show the actual distribution of tree heights
+- The red curve shows what a perfect normal distribution would look like
+- Our data roughly follows this normal shape, though it's not perfect (which is typical for real data)
+
+Can we use the normal distribution to make inferences about tree heights? Yes!  Our calculations won't be perfect, but they will often be close enough for practical purposes.
+
+
+
+### Using R's normal distribution functions
+
+Now that we can see our data is approximately normal, let's learn how to work with normal distributions in R. There are three main functions we'll use:
+
+```{r}
+# Calculate mean and SD for easy reference
+mean_height <- mean(trees$Height)
+sd_height <- sd(trees$Height)
+```
+
+#### Finding probabilities with pnorm()
+The `pnorm()` function helps us find the probability that a value falls below a certain point:
+
+```{r}
+# What proportion of trees are shorter than 75 feet?
+prob_under_75 <- pnorm(75, mean = mean_height, sd = sd_height)
+prob_under_75
+```
+
+This tells us that approximately `r round(prob_under_75 * 100, 1)`% of trees are expected to be shorter than 75 feet.
+
+#### Finding values with qnorm()
+The `qnorm()` function does the opposite - it finds values for given probabilities:
+
+```{r}
+# How tall are the shortest 10% of trees expected to be?
+height_10th <- qnorm(0.10, mean = mean_height, sd = sd_height)
+height_10th
+```
+
+This tells us that approximately 10% of trees are shorter than `r round(height_10th, 1)` feet.
+
+#### Using dnorm() for density values
+The `dnorm()` function gives us the height of the probability curve at any point:
+
+```{r}
+# What's the relative likelihood of finding a tree exactly 75 feet tall?
+density_75 <- dnorm(75, mean = mean_height, sd = sd_height)
+density_75
+```
+
+We use `dnorm()` mainly for plotting, as we did with our normal curve overlay earlier.
+
+
+
+### More practical examples
+
+Let's work through some more questions about tree heights:
+
+Question 1: What proportion of trees are taller than 80 feet?
+
+```{r examples-prob1}
+prob_tall <- 1 - pnorm(80, mean = mean_height, sd = sd_height)
+prob_tall
+```
+
+Question 2: Between what heights do we expect to find the middle 50% of trees?
+
+```{r examples-prob2}
+lower_quartile <- qnorm(0.25, mean = mean_height, sd = sd_height)
+upper_quartile <- qnorm(0.75, mean = mean_height, sd = sd_height)
+c(lower_quartile, upper_quartile)  # Shows both values
+```
+
+Question 3: What height separates the tallest 5% of trees from the rest?
+
+```{r examples-prob3}
+threshold_95 <- qnorm(0.95, mean = mean_height, sd = sd_height)
+threshold_95
+```
+
+Now it's your turn! Try these exercises:
+
+```{r height-prob, exercise=TRUE}
+# Load the data
+data(trees)
+mean_height <- mean(trees$Height)
+sd_height <- sd(trees$Height)
+
+# What proportion of trees are between 70 and 80 feet tall?
+# Hint: Use pnorm() twice and subtract
+
+```
+
+```{r height-prob-solution}
+# Load the data
+data(trees)
+mean_height <- mean(trees$Height)
+sd_height <- sd(trees$Height)
+
+# What proportion of trees are between 70 and 80 feet tall?
+prob_under_80 <- pnorm(80, mean = mean_height, sd = sd_height)
+prob_under_70 <- pnorm(70, mean = mean_height, sd = sd_height)
+prob_between <- prob_under_80 - prob_under_70
+prob_between
+```
+
+### Check your understanding {#quiz-normal}
+
+```{r, quiz-normal, echo=FALSE}
+quiz(
+  question("Based on the mean and standard deviation of tree heights, approximately what percentage of trees would we expect to be between 65 and 85 feet tall?",
+    answer("68%", correct = TRUE, "Yes! This is because approximately 68% of values fall within one standard deviation of the mean in a normal distribution."),
+    answer("95%", "This would be the percentage within two standard deviations."),
+    answer("50%", "This would be the percentage below the mean."),
+    answer("99.7%", "This would be the percentage within three standard deviations."),
+    allow_retry = TRUE
+  ),
+  
+  question("If we find that 80% of trees are shorter than 82 feet, what R function would we use to calculate this height threshold?",
+    answer("qnorm()", correct = TRUE, "Correct! qnorm() finds values for given probabilities."),
+    answer("pnorm()", "pnorm() finds probabilities for given values."),
+    answer("dnorm()", "dnorm() gives the height of the probability curve."),
+    answer("rnorm()", "rnorm() generates random normal values."),
+    allow_retry = TRUE
+  )
+)
+```
+
+
+
+## The Central Limit Theorem (CLT)
+Remember our tree heights? Imagine there are thousands of Black Cherry trees in a forest, and we want to know their average height. It's impossible to measure every tree, so we need to take samples.
+
+Here's what the Central Limit Theorem tells us - if we:
+
+1. Take many different samples of trees (say, 5 trees each time)
+2. Calculate the mean height for each sample
+3. Plot all these sample means
+
+Something remarkable happens - the sample means form a normal distribution, even if the original tree heights weren't perfectly normal!
+
+### Why is this important?
+
+The Central Limit Theorem means we can:
+
+- Study large populations by taking smaller samples
+- Make reliable predictions about population means
+- Use normal distribution properties for statistical tests
+- Trust our sample means to give good estimates
+
+### Let's try it with our trees
+
+From this part onwards, we don't expect you to try to understand the code at all. The important thing is to understand the concepts and results. The code is here to help you visualise the concepts.
+
+To demonstrate this, we'll:
+
+1. Take many different samples of trees
+   - Some samples will be small (5 trees)
+   - Others will be larger (30 trees)
+2. Calculate the mean height for each sample
+3. Look at how these sample means are distributed
+
+We'll do this 1000 times for each sample size to get a clear picture. Think of it like this:
+
+- First sample: mean = 75 feet
+- Second sample: mean = 72 feet
+- Third sample: mean = 78 feet
+- ... and so on until we have 1000 sample means
+
+### Putting the CLT into action
+
+Now let's see the Central Limit Theorem in action. First, we need a function to help us take many samples:
+
+```{r clt-setup}
+# Take 1000 samples of 5 trees each
+means_size5 <- replicate(1000, {
+  sample_trees <- sample(trees$Height, size = 5, replace = TRUE)
+  mean(sample_trees)
+})
+
+# Take 1000 samples of 30 trees each
+means_size30 <- replicate(1000, {
+  sample_trees <- sample(trees$Height, size = 30, replace = TRUE)
+  mean(sample_trees)
+})
+```
+
+The code above:
+
+1. Takes 1000 random samples of tree heights
+2. Calculates the mean height for each sample
+3. Stores these means for analysis
+
+### Watching the magic happen
+
+Now we have 2000 sample means:
+\
+- 1000 from samples of 5 trees
+- 1000 from samples of 30 trees
+
+Let's plot these means to see what the CLT predicts - they should form normal distributions:
+
+```{r clt-viz}
+#| warning: false
+# Create a data frame of the sample means
+samples_df <- data.frame(
+  mean_height = c(means_size5, means_size30),
+  sample_size = factor(rep(c("n = 5", "n = 30"), each = 1000),
+                      levels = c("n = 5", "n = 30"))
+)
+
+# Create side-by-side histograms using ggplot2
+ggplot(samples_df, aes(x = mean_height)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30,
+                fill = "lightblue", color = "black") +
+  geom_vline(xintercept = mean(trees$Height), color = "red", linewidth = 1) +
+  facet_wrap(~sample_size) +
+  labs(title = "Distribution of sample means",
+       subtitle = "Red line shows population mean",
+       x = "Sample mean height (feet)",
+       y = "Density")
+```
+
+### What have we discovered?
+
+The plots reveal three key insights that demonstrate the Central Limit Theorem:
+
+1. **Normal Shape**: Both sets of sample means form bell-shaped curves
+   - Even though we only took 5 or 30 trees at a time
+   - The CLT guarantees this will happen with enough samples
+
+2. **Accurate Center**: Both curves center on the true mean (red line)
+   - Small samples (n=5) and large samples (n=30) both work
+   - This is why sampling lets us estimate population means
+
+3. **Improving Precision**: Notice how the n=30 curve is narrower
+   - Larger samples give more consistent results
+   - This helps us make more precise predictions
+
+### The ultimate test: Really skewed data
+
+The tree heights were already roughly normal, but the real power of the CLT shows when we use very non-normal data. Let's look at river lengths - most rivers are relatively short, but a few are extremely long, creating a strongly skewed distribution:
+
+```{r rivers-setup}
+# Load rivers data
+data(rivers)
+
+# First, let's see the original distribution
+ggplot(data.frame(length = rivers), aes(x = length)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 20,
+                fill = "lightgreen", color = "black") +
+  labs(title = "Distribution of river lengths",
+       subtitle = "Original data is highly skewed",
+       x = "River length (miles)",
+       y = "Density")
+```
+
+Now let's apply the same sampling process:
+
+```{r rivers-clt}
+# Take samples and calculate means
+river_means5 <- replicate(1000, mean(sample(rivers, size = 5, replace = TRUE)))
+river_means30 <- replicate(1000, mean(sample(rivers, size = 30, replace = TRUE)))
+
+# Plot the results
+data.frame(
+  mean_length = c(river_means5, river_means30),
+  sample_size = factor(rep(c("n = 5", "n = 30"), each = 1000))
+) %>%
+  ggplot(aes(x = mean_length)) +
+  geom_histogram(aes(y = after_stat(density)), bins = 30,
+                fill = "lightgreen", color = "black") +
+  geom_vline(xintercept = mean(rivers), color = "red", linewidth = 1) +
+  facet_wrap(~sample_size) +
+  labs(title = "CLT with skewed data",
+       subtitle = "Sample means become more normal with larger samples",
+       x = "Sample mean river length (miles)",
+       y = "Density") +
+  theme_minimal()
+```
+
+Notice how the right plot (n = 30) looks more normal than the left plot (n = 5), even though we started with very skewed data!
+
+This example powerfully demonstrates why the Central Limit Theorem is so important:
+
+1. Even with highly skewed data:
+   - Sample means still tend toward a normal distribution
+   - They still center on the true population mean (red line)
+
+2. Sample size matters:
+   - Small samples (n=5) retain some skewness
+   - Larger samples (n=30) give a more normal distribution
+   - Bigger samples = more reliable estimates
+
+3. The CLT works regardless of the original distribution:
+   - It worked for our roughly normal tree heights
+   - It works for these heavily skewed river lengths
+   - This is why it's such a fundamental principle in statistics
+
+### Testing your understanding {#quiz-clt}
+
+```{r quiz-clt, echo=FALSE}
+quiz(
+  question("In our river lengths example, which sample size produced a more normal-looking distribution?",
+    answer("n = 30", correct = TRUE, "Yes! Larger samples tend to give more normal distributions."),
+    answer("n = 5", "Look again at the histograms - which one looks more bell-shaped?"),
+    answer("Both looked the same", "There was a clear difference between the two sample sizes."),
+    answer("Neither looked normal", "At least one size showed a normal-like shape."),
+    allow_retry = TRUE
+  ),
+  
+  question("What are the key requirements for the Central Limit Theorem to work?",
+    answer("Take multiple random samples and calculate their means", correct = TRUE, "Correct! The CLT is about the behavior of sample means."),
+    answer("The original data must be normally distributed", "The CLT works with any distribution shape."),
+    answer("You must have at least 1000 samples", "The number of samples isn't fixed, though more samples give clearer results."),
+    answer("Remove outliers from the data", "The CLT works with all the data, including outliers."),
+    allow_retry = TRUE
+  ),
+  
+  question("Why do larger sample sizes (like n = 30) work better than smaller ones?",
+    answer("They give more stable and precise estimates", correct = TRUE, "Yes! More data = more reliable estimates."),
+    answer("They make the data normal", "The original data stays the same - it's the sample means that become normal."),
+    answer("They remove extreme values", "Larger samples include extreme values, they just have less impact."),
+    answer("They change the population mean", "The true population mean stays the same regardless of sample size."),
+    allow_retry = TRUE
+  )
+)
+```
+
+
+
+## Thanks!
+
+Well done on completing this tutorial! You've learned about normal distributions and the Central Limit Theorem - two fundamental concepts in statistics. If you have any questions, please ask on Ed. Good luck with your studies!
