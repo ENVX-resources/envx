@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# envx 0.0.0.9014 (2025-03-19)
+
+## Features
+
+- Tutorial 4 is now complete.
+
+
 # envx 0.0.0.9013 (2025-03-15)
 
 ## Bug fixes
