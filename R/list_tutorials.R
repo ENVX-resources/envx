@@ -8,7 +8,7 @@
 #' @return Invisibly returns a data frame of available tutorials
 #' @importFrom learnr available_tutorials run_tutorial
 #' @importFrom tibble tibble
-#' @importFrom purrr map2 walk
+#' @importFrom purrr walk
 #' @export
 #'
 #' @examples
@@ -24,20 +24,8 @@ list_tutorials <- function(tutorial = NULL) {
   tutorials <- learnr::available_tutorials("envx")
   tut_df <- tibble::tibble(tutorials)
 
-  # Create formatted list with index, name, and title
-  tut_list <- purrr::map2(
-    seq_along(tut_df$name),
-    tut_df$name,
-    ~ paste0(.x, ": ", .y)
-  )
-  tut_list <- purrr::map2(
-    tut_list,
-    tut_df$title,
-    ~ paste0(.x, " - ", .y)
-  )
-
-  # Print the formatted list
-  purrr::walk(tut_list, ~ cat(.x, "\n"))
+  # Menu choices formatted as "name - title"
+  choices <- paste0(tut_df$name, " - ", tut_df$title)
 
   # If tutorial number provided, validate and run it
   if (!is.null(tutorial)) {
@@ -52,13 +40,18 @@ list_tutorials <- function(tutorial = NULL) {
   }
 
   # Interactive menu when no valid tutorial was provided
- if (interactive()) {
-    choices <- paste0(tut_df$name, " - ", tut_df$title)
+  if (interactive()) {
     selection <- utils::menu(choices,
       title = "Select a tutorial (or 0 to cancel):")
     if (selection > 0) {
       learnr::run_tutorial(tut_df$name[selection], "envx")
     }
+  } else {
+    # Non-interactive: just print the list
+    purrr::walk(
+      paste0(seq_along(choices), ": ", choices),
+      ~ cat(.x, "\n")
+    )
   }
 
   invisible(tut_df)
