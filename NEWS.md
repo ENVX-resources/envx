@@ -1,3 +1,10 @@
+<!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
+
+# envx 0.0.0.9015 (2026-02-23)
+
+- Same as previous version.
+
+
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
 # envx 0.0.0.9014 (2025-03-19)
