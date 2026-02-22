@@ -13,12 +13,16 @@ list_tutorials(tutorial = NULL)
 Invisibly returns a data frame of available tutorials
 }
 \description{
-List available tutorials and optionally open a specific tutorial
+When called without arguments in an interactive session, displays a
+numbered list of tutorials and presents a menu for selection. A tutorial
+number can also be passed directly to skip the menu.
 }
 \examples{
+\dontrun{
 # List all available tutorials
 list_tutorials()
 
 # Open tutorial number 2 directly
 list_tutorials(2)
+}
 }
