@@ -116,8 +116,12 @@ First of all, don't forget to set up and open up/save a fresh Quarto document.
 
 Next we can read in the data and check the structure (`str`). What are the variable types?
 
-```{r eda, exercise=TRUE}
+```{r eda}
 dat = read.csv("ENVX1002_tut11.csv", header=T)
+```
+
+```{r, exercise = TRUE}
+
 ```
 
 ###
